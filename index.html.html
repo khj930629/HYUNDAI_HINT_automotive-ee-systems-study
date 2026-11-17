@@ -1,0 +1,2574 @@
+<!DOCTYPE html>
+<html lang="ko" class="dark">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HYUNDAI HINT | 자동차 전장 시스템 인터랙티브 교육 플랫폼</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=Noto+Sans+KR:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet" />
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          fontFamily: {
+            sans: ['"Noto Sans KR"', 'Inter', 'sans-serif'],
+            mono: ['"JetBrains Mono"', 'monospace'],
+          },
+          colors: {
+            hyundai: {
+              navy: '#002C5F',
+              dark: '#070D19',
+              panel: '#0E1729',
+              card: '#131F36',
+              border: '#1E3154',
+              blue: '#00AAD2',
+              sky: '#38BDF8',
+              amber: '#F59E0B',
+              emerald: '#10B981',
+              rose: '#F43F5E'
+            }
+          }
+        }
+      }
+    };
+  </script>
+  <style>
+    body {
+      background-color: #070D19;
+      color: #F1F5F9;
+      font-family: 'Noto Sans KR', 'Inter', sans-serif;
+    }
+    /* Custom Scrollbar */
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #070D19; }
+    ::-webkit-scrollbar-thumb { background: #1E3154; border-radius: 9999px; }
+    ::-webkit-scrollbar-thumb:hover { background: #00AAD2; }
+
+    /* Engineering Grid Background */
+    .bg-tech-grid {
+      background-image: 
+        linear-gradient(to right, rgba(0, 170, 210, 0.05) 1px, transparent 1px),
+        linear-gradient(to bottom, rgba(0, 170, 210, 0.05) 1px, transparent 1px);
+      background-size: 28px 28px;
+    }
+
+    /* Pulse & Flow Animations */
+    @keyframes dashFlow {
+      to { stroke-dashoffset: -24; }
+    }
+    .animate-flow {
+      stroke-dasharray: 6 6;
+      animation: dashFlow 1s linear infinite;
+    }
+    @keyframes radarSweep {
+      0% { transform: scale(0.85); opacity: 0.7; }
+      50% { transform: scale(1.05); opacity: 0.3; }
+      100% { transform: scale(0.85); opacity: 0.7; }
+    }
+    .animate-sensor-wave {
+      transform-origin: center;
+      animation: radarSweep 2.4s ease-in-out infinite;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col lg:flex-row bg-hyundai-dark bg-tech-grid selection:bg-hyundai-blue selection:text-white">
+
+  <!-- Mobile Top Header -->
+  <header class="lg:hidden flex items-center justify-between px-4 py-3 bg-hyundai-panel border-b border-hyundai-border sticky top-0 z-40">
+    <div class="flex items-center gap-2.5">
+      <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-hyundai-blue to-hyundai-navy flex items-center justify-center font-extrabold text-white text-sm shadow">H</div>
+      <div>
+        <div class="text-xs font-bold tracking-wider text-hyundai-blue">HYUNDAI HINT</div>
+        <div class="text-sm font-bold text-white leading-tight">자동차 전장 시스템 아카데미</div>
+      </div>
+    </div>
+    <button id="mobileMenuBtn" class="p-2.5 rounded-lg bg-hyundai-card border border-hyundai-border text-slate-200 hover:border-hyundai-blue">
+      <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+    </button>
+  </header>
+
+  <!-- Sidebar Navigation -->
+  <aside id="sidebar" class="fixed inset-y-0 left-0 z-50 w-72 bg-hyundai-panel border-r border-hyundai-border transform -translate-x-full lg:translate-x-0 lg:static lg:flex lg:flex-col transition-transform duration-200 ease-in-out">
+    <div class="p-5 border-b border-hyundai-border">
+      <div class="flex items-center justify-between">
+        <div class="flex items-center gap-3">
+          <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-hyundai-blue via-sky-600 to-hyundai-navy flex items-center justify-center font-black text-white text-lg shadow-lg shadow-sky-950">H</div>
+          <div>
+            <div class="text-[11px] font-bold tracking-widest text-hyundai-blue uppercase">HMG Incubation of New Talent</div>
+            <div class="text-base font-extrabold text-white tracking-tight">현대 HINT 전장 교육</div>
+          </div>
+        </div>
+        <button id="closeSidebarBtn" class="lg:hidden p-1.5 text-slate-400 hover:text-white">✕</button>
+      </div>
+      <div class="mt-4 p-3 rounded-xl bg-hyundai-card/80 border border-hyundai-border">
+        <div class="flex justify-between text-xs mb-1.5">
+          <span class="text-slate-400">전체 커리큘럼 진도율</span>
+          <span id="sidebarProgressText" class="font-bold text-hyundai-blue font-mono">0%</span>
+        </div>
+        <div class="w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+          <div id="sidebarProgressBar" class="h-full bg-gradient-to-r from-hyundai-blue to-sky-400 transition-all duration-500" style="width: 0%"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 8 Core Menus -->
+    <nav class="flex-1 overflow-y-auto p-3 space-y-1" id="mainNav">
+      <button data-route="dashboard" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition text-left">
+        <span class="text-base">📊</span>
+        <span>1. 메인 대시보드</span>
+      </button>
+      <button data-route="roadmap" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition text-left">
+        <span class="text-base">🗺️</span>
+        <span>2. 학습 로드맵</span>
+      </button>
+      <button data-route="theory" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition text-left">
+        <span class="text-base">📘</span>
+        <span>3. 이론 학습 (Ch.01~03)</span>
+      </button>
+      <button data-route="lab" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition text-left">
+        <span class="text-base">🔬</span>
+        <span>4. 인터랙티브 실습실 (A~F)</span>
+      </button>
+      <button data-route="simulator" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition text-left">
+        <span class="text-base">🚘</span>
+        <span>5. 자동차 시스템 시뮬레이터</span>
+      </button>
+      <button data-route="quiz" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition text-left">
+        <span class="text-base">📝</span>
+        <span>6. 퀴즈 및 평가</span>
+      </button>
+      <button data-route="glossary" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition text-left">
+        <span class="text-base">📖</span>
+        <span>7. 핵심 용어 사전</span>
+      </button>
+      <button data-route="records" class="nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition text-left">
+        <span class="text-base">🏆</span>
+        <span>8. 나의 학습 기록</span>
+      </button>
+    </nav>
+
+    <!-- Textbook Fidelity Badge -->
+    <div class="p-4 border-t border-hyundai-border text-xs text-slate-400">
+      <div class="flex items-center gap-2 text-slate-300 font-semibold mb-1">
+        <span class="w-2 h-2 rounded-full bg-emerald-400 animate-pulse"></span>
+        <span>교재 준수 검증 모드 활성</span>
+      </div>
+      <p class="leading-relaxed text-[11px]">기준 교재: 「02. 자동차전장시스템이해.pdf」 (2026 현대자동차 K-뉴딜 아카데미 모빌리티 AI)</p>
+    </div>
+  </aside>
+
+  <!-- Overlay for mobile sidebar -->
+  <div id="sidebarOverlay" class="fixed inset-0 bg-black/60 z-40 hidden lg:hidden"></div>
+
+  <!-- Main Content Workspace -->
+  <main class="flex-1 min-w-0 flex flex-col">
+    <!-- Top Contextual Bar -->
+    <div class="bg-hyundai-panel/90 backdrop-blur border-b border-hyundai-border px-4 sm:px-8 py-3.5 flex flex-wrap items-center justify-between gap-3 sticky top-0 z-30">
+      <div class="flex items-center gap-2 text-xs sm:text-sm">
+        <span class="px-2.5 py-1 rounded-md bg-hyundai-navy text-sky-300 font-semibold border border-sky-800/60">2026 모빌리티 AI</span>
+        <span id="breadcrumbText" class="text-slate-300 font-medium">메인 대시보드</span>
+      </div>
+      <div class="flex items-center gap-2">
+        <button onclick="navigate('theory')" class="px-3 py-1.5 rounded-lg bg-hyundai-card hover:bg-slate-800 border border-hyundai-border text-xs font-semibold text-sky-300 transition">
+          이어서 학습하기 →
+        </button>
+        <button onclick="openModal('guideModal')" class="px-3 py-1.5 rounded-lg bg-hyundai-blue/20 hover:bg-hyundai-blue/30 border border-hyundai-blue/40 text-xs font-semibold text-hyundai-blue transition">
+          학습 가이드
+        </button>
+      </div>
+    </div>
+
+    <!-- Dynamic View Container -->
+    <div id="appContainer" class="flex-1 p-4 sm:p-6 lg:p-8 max-w-7xl w-full mx-auto space-y-6">
+      <!-- Content injected dynamically by JS -->
+    </div>
+  </main>
+
+  <!-- Custom Notification Toast -->
+  <div id="toastBox" class="fixed bottom-5 right-5 z-50 hidden max-w-sm bg-hyundai-card border border-hyundai-blue text-white px-4 py-3 rounded-xl shadow-2xl flex items-center gap-3">
+    <span id="toastIcon" class="text-lg">✅</span>
+    <div id="toastMessage" class="text-xs sm:text-sm font-medium"></div>
+  </div>
+
+  <!-- Custom Modal (Replaces alert/confirm) -->
+  <div id="guideModal" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/75 p-4">
+    <div class="bg-hyundai-panel border border-hyundai-border rounded-2xl max-w-lg w-full p-6 shadow-2xl space-y-4">
+      <div class="flex items-center justify-between border-b border-hyundai-border pb-3">
+        <h3 class="text-lg font-bold text-white flex items-center gap-2">
+          <span class="text-hyundai-blue">📘</span> 현대 HINT 학습 플랫폼 활용 가이드
+        </h3>
+        <button onclick="closeModal('guideModal')" class="text-slate-400 hover:text-white text-lg">✕</button>
+      </div>
+      <div class="space-y-3 text-xs sm:text-sm text-slate-300 leading-relaxed">
+        <p>• <strong>1차 기준 교재 준수:</strong> 모든 이론과 수치는 첨부된 「02. 자동차전장시스템이해.pdf」를 기준으로 구성되었으며, 추가 심화 해설은 <span class="text-amber-400 font-semibold">[심화 보충]</span> 배지로 명확히 구분했습니다.</p>
+        <p>• <strong>3단계 난이도 학습:</strong> 이론 학습의 모든 핵심 개념은 <strong>기초(용어·개념) → 심화(구성·작동원리) → 실무(실차 적용·고장 영향)</strong> 탭으로 전환하며 학습할 수 있습니다.</p>
+        <p>• <strong>6대 핵심 질문 마스터:</strong> 센서 수집 원리, ECU 연산, CAN 통신 필요성, E/E 아키텍처 진화, BMS 역할, 자율주행 센서 퓨전을 실습실과 시뮬레이터에서 직접 조작해 보세요.</p>
+      </div>
+      <div class="pt-2 flex justify-end">
+        <button onclick="closeModal('guideModal')" class="px-4 py-2 rounded-xl bg-hyundai-blue text-slate-950 font-bold text-xs sm:text-sm hover:bg-sky-400 transition">확인했습니다</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    /*************************************************************************
+     * 1. DATA LAYER (교재 「02. 자동차전장시스템이해.pdf」 100% 기반 데이터)
+     *************************************************************************/
+    const CURRICULUM = [
+      {
+        id: 'ch1',
+        chapter: 'Chapter 01',
+        title: '자동차 전장 시스템의 구성',
+        subtitle: '차량 전체 구조, 와이어링 하네스, 내연기관(ICE)과 전기차(BEV) 부품 구성 비교',
+        pages: 'p.4 ~ p.11',
+        objectives: [
+          '현대 자동차가 단순 기계장치에서 "바퀴 달린 완벽한 IT 인프라"로 변화한 배경을 이해한다.',
+          '차체를 구성하는 4대 핵심 영역(파워트레인, 섀시, 전장&센서, 차체&의장)과 부품 비중을 설명할 수 있다.',
+          '와이어링 하네스(Wiring Harness)의 역할과 길이(약 2,000m~5,000m)·무게(40~50kg) 특성을 파악한다.',
+          '내연기관(ICE) 대비 순수전기차(BEV) 전환 시 부품 수 감소(약 30~40%)와 부품 생태계 변화를 분석한다.'
+        ],
+        prerequisites: [
+          { term: '내연기관(ICE, Internal Combustion Engine)', desc: '가솔린이나 디젤 연료를 연소시켜 동력을 얻는 전통적 엔진 방식' },
+          { term: '전장 시스템(Automotive Electronics)', desc: '차량에 탑재되는 모든 전기·전자 제어 장치, 센서, 배선 및 소프트웨어 체계' }
+        ],
+        levels: {
+          basic: '일반 내연기관 승용차 1대에는 볼트·너트를 포함해 약 2만 5천~3만 개의 부품이 사용됩니다. 크게 동력을 만드는 파워트레인(약 33%), 주행과 제동을 담당하는 섀시(약 25%), 탑승자 공간을 이루는 차체 및 의장(약 22%), 그리고 차량의 두뇌와 신경망인 전장 및 센서(약 20%)로 나뉩니다.',
+          advanced: '100개 이상의 ECU 제어장치에 전력과 신호를 공급하기 위해 차량 내부에는 길이 약 2,000m~5,000m(평균 약 3km), 무게 40~50kg에 달하는 와이어링 하네스(Wiring Harness)가 구석구석 연결되어 있습니다. 구동 방식별 부품 수는 하이브리드(HEV) 32,000개(107%), 내연기관(ICE) 30,000개(100%), 수소전기차(FCEV) 22,000개(73%), 순수전기차(BEV) 18,000개(60%) 수준으로 BEV 전환 시 엔진·변속기 감축으로 약 30~40% 감소합니다.',
+          practical: '전기차 전환 시 기존 내연기관 부품의 35%(엔진·연료·배기계)가 소멸하고, 50%(차체·섀시·시트)는 공통 유지되며, 15%(배터리 패키징, 구동모터, 인버터, 전력반도체)의 고부가가치 신규 부품이 추가됩니다. 현장 정비 및 설계에서는 40~50kg에 육박하는 하네스 중량과 배선 단선·커넥터 접촉 불량이 전장 고장의 주요 원인이므로 하네스 경량화 및 통합 설계가 핵심 실무 과제입니다.'
+        },
+        components: [
+          { name: '차체(Body) & 크럼플 존(Crumple Zone)', role: '승객실과 화물 공간을 형성하며 충돌 시 에너지를 흡수해 탑승자 보호. 보닛, 도어, 펜더, 범퍼 등 외장 패널 포함.' },
+          { name: '파워트레인 & 구동계 (약 10,000개 / 33%)', role: '엔진 블록, 피스톤, 변속기, 연료/배기계(ICE) 또는 배터리·모터·인버터·감속기(BEV)로 주행 동력 생성 및 전달.' },
+          { name: '섀시(Chassis) 시스템 (약 25%)', role: '서스펜션(현가장치), 조향장치, 제동장치, 타이어로 구성되어 차량 조종성, 주행 안정성, 승차감 유지.' },
+          { name: '와이어링 하네스(Wiring Harness)', role: '총연장 2,000m~5,000m, 무게 40~50kg의 전선 뭉치. 100개 이상의 ECU에 전력과 통신 신호를 실시간 공급.' }
+        ],
+        realCase: '현대차그룹 E-GMP 기반 순수전기차(아이오닉 5 등)는 내연기관의 엔진·변속기·배기계를 제거하여 부품 수를 약 18,000개 수준으로 줄이고, 하부 플랫 배터리와 고전압 와이어링 하네스를 적용해 실내 공간과 전비를 극대화했습니다.',
+        summary: [
+          '현대 자동차는 기계장치를 넘어 바퀴 달린 완벽한 IT 인프라로 진화했다.',
+          '내연기관 기준 약 30,000개 부품 중 파워트레인 33%, 섀시 25%, 차체/의장 22%, 전장/센서 20% 비중을 가진다.',
+          '와이어링 하네스는 길이 2,000~5,000m, 무게 40~50kg에 달해 E/E 아키텍처 혁신의 직접적 동인이 된다.',
+          'BEV 전환 시 내연기관 부품 35% 소멸, 신규 전동화 부품 15% 추가로 전체 부품 수가 약 30~40% 감소한다.'
+        ],
+        quiz: {
+          q: '교재에 따르면, 일반 내연기관(ICE) 대비 순수전기차(BEV)로 전환할 때 전체 부품 수의 변화로 옳은 것은?',
+          options: [
+            '엔진과 모터가 함께 탑재되어 부품 수가 약 20% 증가한다.',
+            '핵심 엔진과 변속기가 감축되어 부품 수가 약 30~40% 대폭 감소한다.',
+            '부품 수에는 거의 변화가 없으며 무게만 50% 줄어든다.',
+            '와이어링 하네스가 완전히 사라져 부품 수가 90% 감소한다.'
+          ],
+          answer: 1,
+          explanation: '교재 p.9에 따르면 내연기관(30,000개, 100%) 대비 순수전기차(BEV)는 엔진과 변속기가 감축되어 약 18,000개(60%) 수준으로 약 30~40% 대폭 감소합니다. (하이브리드 HEV는 32,000개로 107% 수준입니다.)'
+        }
+      },
+      {
+        id: 'ch2_1',
+        chapter: 'Chapter 02 - 2-1',
+        title: '센서 시스템 (인간의 오감과 초감각)',
+        subtitle: '4대 자율주행 핵심 센서(카메라·LiDAR·Radar·초음파) 및 촉각·후각·V2X 통신',
+        pages: 'p.12 ~ p.30',
+        objectives: [
+          '전장 시스템의 3단계 작동 구조(센서 입력 → ECU 판단 → 액추에이터 출력)를 설명할 수 있다.',
+          '4대 핵심 센서(카메라, LiDAR, Radar, 초음파)의 물리적 작동 원리와 탐지 거리·장단점을 비교할 수 있다.',
+          '청각(음향/초음파), 촉각(HOD/압력), 후각(공기질/가스), 초감각(V2X) 센서의 역할을 이해한다.'
+        ],
+        prerequisites: [
+          { term: 'ToF (Time of Flight, 비행시간 측정)', desc: '신호(레이저 등)가 발사되어 물체에 반사 후 돌아오는 왕복 시간을 측정해 거리를 산출하는 원리' },
+          { term: '도플러 효과 (Doppler Effect)', desc: '파동을 발생시키는 물체와 관측자의 상대 속도에 따라 주파수가 변하는 현상' }
+        ],
+        levels: {
+          basic: '자동차 전장 시스템은 센서(눈과 귀: 입력) → 제어기 ECU(두뇌: 판단) → 액추에이터(손발: 출력)의 3단계로 작동합니다. 외부 환경 인지를 위한 4대 핵심 센서는 카메라(색상/표지판), 라이다(3D 입체 거리), 레이더(악천후 속도/거리), 초음파(근거리 주차 보조)입니다.',
+          advanced: '① 카메라: 렌즈와 CMOS/CCD 이미지 센서, ISP(노이즈 제거·HDR)를 거쳐 딥러닝으로 객체를 분류(탐지 ~250m, 조도/날씨 민감). ② 라이다(LiDAR): 905nm 또는 1550nm 펄스 레이저의 비행시간(ToF)으로 고해상도 3D 점군(Point Cloud) 생성(탐지 ~200m, 비/안개 영향). ③ 레이더(Radar): 24GHz/77GHz 밀리미터파(mmWave) FMCW 방식과 도플러 효과로 거리·상대속도 직접 측정(탐지 ~300m, 악천후에 매우 강함). ④ 초음파: 압전 소자 40kHz 음파 에코로 0.1~5m 초근거리 감지.',
+          practical: '오감 확장 센서도 실차 안전에 필수적입니다. HOD(Hands-Off Detection) 정전식 센서는 운전자의 스티어링 휠 파지 여부를 감지하고, 실내 공기질(CO2, PM2.5, VOCs) 센서는 배터리 열폭주 전조 가스까지 포착합니다. 또한 V2X(V2V, V2I, V2P, V2N)는 건물 뒤편이나 수 km 전방 사고 정보를 수신하는 초감각(6th Sense) 역할을 수행합니다. 센서 반응 속도(50ms)는 인간(750ms)을 압도합니다.'
+        },
+        components: [
+          { name: '카메라 (Camera) - 시각', role: '가시광선/적외선 기반. 색상·차선·표지판·신호등 완벽 인식(~250m). 저렴하지만 야간·악천후에 취약.' },
+          { name: '라이다 (LiDAR) - 3D 시각', role: '905/1550nm 레이저 ToF 방식. 정밀 3D 점군 맵 구축(~200m). 고가이며 폭우·안개 시 산란 영향.' },
+          { name: '레이더 (Radar) - 전천후 시각', role: '24/77GHz 밀리미터파(FMCW) & 도플러 효과. 최대 ~300m 탐지. 비·눈·안개에 강하나 색상·형상 식별 미흡.' },
+          { name: '초음파(40kHz) / HOD / 공기질 / V2X', role: '초음파(0.1~5m 주차보조), HOD(핸들 접촉 감지), 공기질(CO2/열폭주 가스), V2X(차량·인프라·보행자 통신).' }
+        ],
+        realCase: '현대차 제네시스 G90의 고속도로 자율주행(HDP)은 전방 라이다 2개, 4D 레이더, 서라운드 카메라를 결합해 단일 센서의 한계(카메라의 야간 취약성, 라이다의 악천후 산란)를 상호 보완합니다.',
+        summary: [
+          '전장 시스템은 센서(입력) → ECU(판단) → 액추에이터(출력)의 폐루프(Closed-Loop) 구조로 동작한다.',
+          '카메라(색상/표지판), LiDAR(3D 정밀 거리), Radar(악천후 장거리 속도), 초음파(0.1~5m 근거리)는 상호 보완적이다.',
+          'HOD(촉각), 공기질 센서(후각), V2X(초감각)는 차량 내·외부 안전을 입체적으로 확장한다.'
+        ],
+        quiz: {
+          q: '비, 눈, 안개 등 악천후 환경에서도 전파 감쇄가 적어 장거리(~300m) 차간 거리 및 상대 속도 측정에 가장 유리한 센서는?',
+          options: [
+            '가시광선 기반 단안 카메라 (Camera)',
+            '905nm 펄스 레이저 라이다 (LiDAR)',
+            '77GHz 밀리미터파 레이더 (Radar)',
+            '40kHz 압전 소자 초음파 센서 (Ultrasonic)'
+          ],
+          answer: 2,
+          explanation: '교재 p.20 및 p.23 비교표에 따르면 레이더(Radar)는 24GHz/77GHz 밀리미터파 전파와 도플러 효과를 이용하므로 비·눈·안개 등 악천후에 매우 강하며 최대 ~300m 장거리 탐지가 가능합니다.'
+        }
+      },
+      {
+        id: 'ch2_2',
+        chapter: 'Chapter 02 - 2-2',
+        title: 'E/E 시스템 아키텍처의 혁신',
+        subtitle: '분산형 ECU에서 도메인 제어기(DCU), 존(Zonal) 아키텍처 및 SDV·OTA로의 진화',
+        pages: 'p.31 ~ p.39',
+        objectives: [
+          '기존 분산형 ECU 아키텍처(70~100개 이상 ECU)가 직면한 배선 무게 및 OTA 한계를 설명할 수 있다.',
+          '기능 중심의 도메인 제어기(DCU)와 물리적 위치 중심의 존(Zonal) 아키텍처의 차이를 구분한다.',
+          '하드웨어와 소프트웨어 분리(Decoupling)를 통한 SDV(소프트웨어 중심 자동차) 및 OTA 구현 원리를 이해한다.'
+        ],
+        prerequisites: [
+          { term: 'ECU (Electronic Control Unit)', desc: '차량의 특정 시스템을 전자적으로 제어하는 마이크로컨트롤러 기반 제어기' },
+          { term: 'OTA (Over-The-Air)', desc: '서비스센터 방문 없이 무선 네트워크를 통해 차량의 소프트웨어를 업데이트하는 기술' }
+        ],
+        levels: {
+          basic: '과거 자동차는 기능마다 1개의 ECU를 붙이는 "분산형 아키텍처"를 사용해 ECU가 70~100개 이상으로 늘어나고 전선이 너무 무거워졌습니다. 이를 해결하기 위해 기능별로 묶는 "도메인형(DCU)"을 거쳐, 차량의 구역(전/후/좌/우)별로 묶고 중앙 컴퓨터가 총괄하는 "존(Zonal) 아키텍처"로 발전하고 있습니다.',
+          advanced: '① 분산형(~2018): 단일 기능별 1:1 ECU, 70~100개 이상, CAN/LIN 위주, 개별 정비소 업데이트. ② 도메인형(2019~2022): 파워트레인/섀시, ADAS, 콕핏 등 영역별 통합(~50개 수준), 멀티코어 AP 및 AUTOSAR Adaptive 도입, CAN-FD/FlexRay. ③ 존 아키텍처(2023~2025): 물리적 위치(Zone) 중심 Zone Gateway가 인근 센서/액추에이터를 제어하고 초고속 이더넷 백본으로 중앙 차량 컴퓨터(HPC/HPVC)와 연결(제어기 10개 미만).',
+          practical: 'Zonal 아키텍처를 도입하면 와이어링 하네스 길이를 500m 이상 단축하고 배선 중량을 30% 이상(바디 영역 최대 50%) 절감하여 전비와 제조 원가(BOM)를 혁신합니다. 또한 HW와 SW가 완전히 분리되고 SOA(Service-Oriented Architecture) 기반 표준 API가 적용되어 출고 후에도 지속적인 OTA 업데이트와 구독형 서비스(FoD) 상용화가 가능해집니다.'
+        },
+        components: [
+          { name: '분산형 ECU 아키텍처 (Distributed)', role: '기능별 1:1 독립 제어기(70~100개+). 배선 복잡도 폭발 및 전체 차량 OTA 불가.' },
+          { name: '도메인 제어기 (DCU, Domain Control Unit)', role: '파워트레인·섀시, ADAS, 콕핏 등 유사 기능군별 통합 제어기(~50개 수준). 제한적 OTA 지원.' },
+          { name: '존 제어기 (Zonal Gateway) & 중앙 컴퓨터(HPC)', role: '물리적 위치(전/후/좌/우) 기반 I/O 통합 및 이더넷 백본 연결. 하네스 중량 30% 이상 절감.' },
+          { name: 'SDV (Software-Defined Vehicle) & SOA', role: 'HW-SW 완전 분리, 서비스 지향 아키텍처(SOA) 및 상시 무선 업데이트(OTA) 구현.' }
+        ],
+        realCase: '글로벌 완성차 로드맵에 따라 2023~2025년 Zonal 아키텍처와 중앙 컴퓨터가 상용화되었으며, 2026년 이후에는 AI 중앙 집약 제어 플랫폼 기반의 완전한 SDV 체계가 확립되고 있습니다.',
+        summary: [
+          'E/E 아키텍처는 분산형(기능별 1:1) → 도메인형(기능군 통합) → 존형(물리적 위치 통합 + 중앙 HPC)으로 진화한다.',
+          '존 아키텍처는 배선 길이를 500m 이상 단축하고 하네스 중량을 30% 이상 절감한다.',
+          'HW와 SW의 완전한 분리는 상시 OTA 업데이트와 SDV 시대의 핵심 기반이다.'
+        ],
+        quiz: {
+          q: '존(Zonal) 아키텍처가 기존 도메인(Domain) 아키텍처와 구별되는 가장 핵심적인 통합 기준은 무엇인가?',
+          options: [
+            '제조사와 부품 공급업체(Tier-1)의 국가별 분류 기준',
+            '기능 영역이 아닌 차량 내 물리적 위치(전/후/좌/우 구역) 중심 통합',
+            '배터리 전압(12V vs 48V)에 따른 전선 색상별 통합',
+            '운전자가 수동으로 스위치를 조작하는 기계적 링크 기준'
+          ],
+          answer: 1,
+          explanation: '교재 p.35 및 p.37에 따르면 도메인형은 기능 영역(파워트레인, 바디 등)별 통합인 반면, 존(Zonal) 아키텍처는 차량의 물리적 위치(Zone: 전방, 후방, 좌/우)를 기준으로 인근 센서와 액추에이터를 Zone 제어기로 통합하고 초고속 이더넷 백본으로 중앙 컴퓨터와 연결합니다.'
+        }
+      },
+      {
+        id: 'ch2_3',
+        chapter: 'Chapter 02 - 2-3',
+        title: '차량 통신 및 네트워크',
+        subtitle: 'LIN, CAN / CAN FD, FlexRay, Automotive Ethernet 프로토콜 비교와 작동 구조',
+        pages: 'p.40 ~ p.49',
+        objectives: [
+          '수십 개의 ECU가 최소한의 배선으로 데이터를 교환하기 위해 차량용 네트워크가 필요한 이유를 이해한다.',
+          'LIN, CAN/CAN FD, FlexRay, Automotive Ethernet의 전송 속도, 물리계층, 토폴로지, 적용 분야를 비교할 수 있다.',
+          'CAN 통신의 메시지 ID 기반 우선순위 중재(Arbitration)와 차동 신호 구조를 파악한다.'
+        ],
+        prerequisites: [
+          { term: '토폴로지 (Topology)', desc: '통신 네트워크에서 노드(제어기)들과 케이블이 물리적·논리적으로 연결된 배치 형태 (Bus, Star 등)' },
+          { term: '결정론 (Determinism)', desc: '데이터가 정해진 시간 내에 지연 없이 반드시 도착함을 보장하는 실시간성 특성' }
+        ],
+        levels: {
+          basic: '자동차 내부에는 제어 목적과 데이터 양에 따라 4가지 대표 통신망이 쓰입니다. 창문·시트 같은 단순 편의 기능엔 저렴한 LIN(20kbps), 엔진·브레이크 등 주행 제어엔 표준인 CAN(1~5Mbps), 초정밀 실시간 안전 제어엔 FlexRay(10~20Mbps), 자율주행 카메라·라이다 대용량 영상엔 초고속 Automotive Ethernet(100Mbps~10Gbps+)이 사용됩니다.',
+          advanced: '① LIN: Single-Wire(단선), 최대 20kbps, Single Master / Multi Slave(최대 16노드). ② CAN(ISO 11898): Dual Wire(UTP 차동신호), Multi-Master Bus, 클래식 CAN 최대 1Mbps / CAN FD 최대 5~8Mbps, 메시지 ID가 낮을수록 높은 우선순위를 갖는 비파괴 중재 방식. ③ FlexRay: 듀얼 채널 최대 20Mbps, TDMA 시간 동기화 기반의 높은 결정론 및 하드웨어 이중화. ④ Automotive Ethernet(100BASE-T1 / 1000BASE-T1): Single Pair UTP, Switched Point-to-Point, TSN(Time-Sensitive Networking) 지원.',
+          practical: '클래식 CAN(1Mbps) 대비 차량용 이더넷(1Gbps)은 1,000배 이상의 대역폭 혁신을 제공하여 비압축 고화질 서라운드 카메라와 HD 라이다 데이터를 실시간 전송합니다. 실무에서는 Zonal 게이트웨이 간 메인 백본은 이더넷으로 연결하고, 각 Zone 하위의 저비용 액추에이터는 LIN이나 CAN으로 연결하는 하이브리드 네트워크 구조를 설계합니다.'
+        },
+        components: [
+          { name: 'LIN (Local Interconnect Network)', role: '최대 20 kbps, Single-Wire, Master-Slave(최대 16노드). 파워 윈도우, 사이드 미러, 시트 등 저비용 바디 제어.' },
+          { name: 'CAN / CAN FD (Controller Area Network)', role: '1 Mbps(클래식) / 5~8 Mbps(CAN FD), Dual-Wire UTP, Multi-Master Bus. ID 기반 우선순위 중재. 파워트레인/섀시/BCM 표준.' },
+          { name: 'FlexRay', role: '채널당 10 Mbps(듀얼 20 Mbps), TDMA 시간 동기화. 매우 높은 결정론과 이중화 지원. X-by-Wire 섀시 제어.' },
+          { name: 'Automotive Ethernet (100/1000BASE-T1)', role: '100 Mbps ~ 10 Gbps+, Single Pair UTP, Switched P2P. 클래식 CAN 대비 1,000배 대역폭. ADAS 및 Zonal 백본.' }
+        ],
+        realCase: '현대차의 최신 Zonal E/E 아키텍처는 중앙 고성능 컴퓨터(HPC)와 존 제어기 사이를 1Gbps 이상 Automotive Ethernet 백본으로 연결하고, 도어 모듈 내부의 미러·윈도우 모터는 LIN 통신으로 제어하여 비용과 성능을 최적화합니다.',
+        summary: [
+          '속도 비교: LIN(20kbps) < CAN(1Mbps) < CAN FD(5~8Mbps) < FlexRay(20Mbps) < Automotive Ethernet(1,000Mbps+).',
+          'CAN 통신은 메시지 ID 기반 우선순위 중재와 높은 에러 감지 신뢰성으로 차량 제어의 글로벌 표준이다.',
+          'Automotive Ethernet은 클래식 CAN 대비 1,000배 대역폭으로 자율주행 센서 융합과 SDV 백본의 핵심이다.'
+        ],
+        quiz: {
+          q: '다음 차량 통신 프로토콜을 최대 데이터 전송 속도가 느린 순서부터 빠른 순서로 올바르게 나열한 것은?',
+          options: [
+            'CAN → LIN → Automotive Ethernet → FlexRay',
+            'LIN → CAN → CAN FD → FlexRay → Automotive Ethernet',
+            'FlexRay → LIN → CAN → Automotive Ethernet',
+            'LIN → FlexRay → CAN FD → Automotive Ethernet'
+          ],
+          answer: 1,
+          explanation: '교재 p.46 및 p.49 그래프에 명시된 속도는 LIN(20 kbps) → CAN(1 Mbps) → CAN FD(5 Mbps) → FlexRay(20 Mbps) → Automotive Ethernet(1,000 Mbps+) 순입니다.'
+        }
+      },
+      {
+        id: 'ch2_4',
+        chapter: 'Chapter 02 - 2-4',
+        title: '차량 배터리 시스템 및 BMS',
+        subtitle: 'HEV·PHEV·BEV 배터리 스펙 비교, BMS(SOC/SOH), 열관리 및 400V/800V 고전압 아키텍처',
+        pages: 'p.50 ~ p.60',
+        objectives: [
+          'HEV, PHEV, BEV의 배터리 용량(kWh), 시스템 전압(V), 외부 충전 여부, EV 주행거리를 비교할 수 있다.',
+          'BMS(배터리 관리 시스템)의 핵심 기능인 SOC(충전상태), SOH(건강상태), 셀 밸런싱, 안전 차단을 설명한다.',
+          '400V 대비 800V 고전압 시스템의 장점(18분 내 80% 초고속 충전)과 수냉식 열관리·열폭주 방지 구조를 이해한다.'
+        ],
+        prerequisites: [
+          { term: 'SOC (State of Charge, 충전 상태)', desc: '배터리 전체 용량 대비 현재 남아 있는 잔여 전력량 비율(%)' },
+          { term: 'SOH (State of Health, 수명/건강 상태)', desc: '초기 출고 시 배터리 성능 대비 현재 노화 정도를 나타내는 건강도 지표(%)' }
+        ],
+        levels: {
+          basic: '친환경차는 배터리의 크기와 역할에 따라 나뉩니다. HEV(하이브리드)는 외부 충전 없이 1.3~2.1kWh 소용량 배터리로 엔진을 보조하고, PHEV(플러그인 하이브리드)는 10.8~18.0kWh 배터리를 외부 충전해 40~80km를 전기로 주행합니다. BEV(순수전기차)는 엔진 없이 58.0~100.0+kWh 대용량 고전압 배터리만으로 350~600km 이상을 주행합니다.',
+          advanced: '① 사양 정밀 비교(교재 p.57): HEV(1.3~2.1kWh / 200~270V / 30~45kg / EV 1~3km), PHEV(10.8~18.0kWh / 300~380V / 120~180kg / EV 40~80km), BEV(58.0~100.0+kWh / 400~800V / 400~650kg / EV 350~600km+). ② 대표 모델 비교(p.58): HEV 1.6kWh(240V) vs PHEV 13.8kWh(360V) vs BEV 77.4kWh(800V)로 BEV가 HEV 대비 약 45~50배 큽니다. ③ BMS: 수백 개 셀의 전압·전류·온도를 실시간 감시해 SOC·SOH를 추정하고 셀 밸런싱 및 이상 시 릴레이 차단 수행.',
+          practical: '800V 고전압 플랫폼은 동일 전력(P=V×I) 전송 시 전류를 절반으로 낮춰 발열과 케이블 두께를 줄이며 18분 내 80% 초고속 충전을 실현합니다. 실무에서는 고출력·급속 충전 시 발열 제어를 위해 수냉식 쿨링 패브릭을 적용하고, 열폭주(Thermal Runaway) 전이를 막기 위해 셀 간 열차단재와 내화 하우징을 설계하며, 차세대 전고체 배터리(Solid-State) 및 CTP/CTC 기술로 진화하고 있습니다.'
+        },
+        components: [
+          { name: 'HEV 배터리 (1.3~2.1 kWh / 200~270V)', role: '외부 충전 불가. 회생제동 및 엔진 발전으로 충전하며 급가속 보조(고출력 C-rate 특성, 30~45kg).' },
+          { name: 'PHEV 배터리 (10.8~18.0 kWh / 300~380V)', role: 'AC 완속 외부 충전 지원. 약 40~80km EV 주행 후 SOC 저하 시 자동으로 HEV 모드 전환(120~180kg).' },
+          { name: 'BEV 배터리 팩 (58.0~100.0+ kWh / 400~800V)', role: '차체 하부 스케이트보드 배치로 저중심 구현. DC 급속(800V 기준 18분 내 80%) 지원, 350~600km+ 주행.' },
+          { name: 'BMS (Battery Management System)', role: '수백 개 셀의 SOC/SOH 실시간 추정, 셀 밸런싱, 수냉식 열관리 연동, 열폭주 예방 고전압 차단 제어.' }
+        ],
+        realCase: '현대차그룹 E-GMP 플랫폼(77.4kWh / 800V 시스템)은 멀티 급속 충전 시스템을 통해 350kW급 초급속 충전기 연결 시 18분 이내에 배터리 SOC 10%에서 80%까지 충전할 수 있습니다.',
+        summary: [
+          'BEV 배터리 용량(예: 77.4kWh)은 HEV(예: 1.6kWh) 대비 약 45~50배 이상 크다.',
+          '800V 고전압 아키텍처는 전류 저감을 통해 충전 시간을 획기적으로 단축(18분 내 80%)한다.',
+          'BMS는 SOC/SOH 추정, 셀 밸런싱, 열관리 및 열폭주 차단을 담당하는 전기차 배터리의 두뇌다.'
+        ],
+        quiz: {
+          q: '교재의 「핵심 배터리 사양 정밀 비교」 표를 기준으로, 플러그인 하이브리드(PHEV)의 특징으로 옳은 것은?',
+          options: [
+            '외부 충전이 불가능하며 오직 회생제동으로만 충전된다.',
+            '배터리 용량은 10.8~18.0 kWh 수준이며, 약 40~80 km의 전용 EV 주행거리를 제공한다.',
+            '배터리 팩 무게가 400~650 kg에 달하며 800V 초고속 DC 충전을 기본 지원한다.',
+            '내연기관 엔진이 완전히 제거된 단일 동력원 구조이다.'
+          ],
+          answer: 1,
+          explanation: '교재 p.54 및 p.57에 따르면 PHEV는 10.8~18.0 kWh(대표 13.8kWh), 300~380V(대표 360V) 사양을 가지며 외부 AC 완속 충전을 통해 약 40~80km를 순수 전기(EV 모드)로 주행한 뒤 SOC가 낮아지면 자동으로 HEV 모드로 전환됩니다.'
+        }
+      },
+      {
+        id: 'ch3_1',
+        chapter: 'Chapter 03 - 3-1',
+        title: '파워트레인 도메인 변화',
+        subtitle: '내연기관(ICE) vs 전기 파워트레인(PE 시스템), 모터·인버터·감속기, SiC 반도체 및 e-Axle',
+        pages: 'p.62 ~ p.70',
+        objectives: [
+          '내연기관 동력 전달(열효율 20~30%)과 전기차 PE 시스템(효율 85% 이상)의 에너지 효율 차이를 설명한다.',
+          '전기차 PE(Power Electric) 시스템의 핵심 구성 요소(구동모터, 트랙션 인버터, 감속기, VCU)의 역할을 이해한다.',
+          'SiC(탄화규소) 전력반도체 도입 효과와 4단계 전동화 로드맵(MHEV → PHEV → Dedicated BEV → e-Axle & 전고체)을 파악한다.'
+        ],
+        prerequisites: [
+          { term: '인버터 (Inverter)', desc: '배터리의 직류(DC) 전력을 구동모터 회전용 3상 교류(AC) 전력으로 변환하고 주파수·전압으로 토크를 제어하는 장치' },
+          { term: '회생제동 (Regenerative Braking)', desc: '감속 시 구동모터가 발전기로 작동해 운동 에너지를 전기에너지로 회수하여 배터리에 충전하는 기술' }
+        ],
+        levels: {
+          basic: '내연기관은 연료를 태워 폭발시키는 과정에서 열과 마찰로 에너지의 70~80%를 잃고 약 20~30%만 바퀴에 전달합니다. 반면 전기차 PE(Power Electric) 시스템은 배터리의 전기를 인버터와 구동모터, 감속기를 통해 바로 회전력으로 바꾸어 85% 이상의 높은 에너지 효율을 냅니다.',
+          advanced: '① PE 시스템 구성: 고전압 배터리(DC) → 트랙션 인버터(DC→3상 AC 변환, VCU 토크 지령 수행) → 고효율 구동모터(PMSM, 영구자석 동기모터) → 감속기(모터의 고속·저토크 회전을 바퀴 구동에 적합한 감속비로 변환). ② 전동화 3대 동력: 글로벌 환경 규제(EU 2035년 내연기관 신차 판매 금지), 배터리·SiC 전력반도체 혁신, 총소유비용(TCO) 역전. ③ SiC(탄화규소) 반도체: 기존 실리콘(Si) 대비 고전압·고온 내성이 뛰어나 인버터 효율을 5% 이상 향상.',
+          practical: '전동화 로드맵은 1단계 MHEV/HEV(48V 보조모터) → 2단계 PHEV → 3단계 Dedicated BEV(E-GMP 전용 플랫폼) → 4단계 e-Axle(모터·인버터·감속기 3-in-1 일체화) 및 전고체 배터리 상용화로 발전합니다. 실무에서는 히트펌프 기반 통합 열관리 시스템으로 배터리와 실내 온도를 동시에 제어해 겨울철 주행거리 저하를 방어합니다.'
+        },
+        components: [
+          { name: '구동 모터 (PMSM) & 감속기', role: '전기에너지를 즉각적인 기계적 회전 토크로 변환하고 단일 기어 감속기로 바퀴에 동력 전달.' },
+          { name: '트랙션 인버터 (Inverter) & SiC 반도체', role: '배터리 직류(DC)를 3상 교류(AC)로 변환. SiC 전력반도체 적용 시 효율 5% 이상 향상.' },
+          { name: 'VCU (Vehicle Control Unit)', role: '가속/브레이크 페달 신호와 BMS 상태를 종합해 모터 토크 및 회생제동량을 총괄 지령하는 상위 제어기.' },
+          { name: '통합 열관리 (히트펌프) & e-Axle', role: '폐열 회수 히트펌프로 전비 극대화. 모터·인버터·감속기를 하나로 합친 3-in-1 e-Axle로 경량화.' }
+        ],
+        realCase: '현대차 아이오닉 5/6 후륜 메인 인버터에는 차세대 SiC(탄화규소) 전력반도체가 적용되어 전력 변환 손실을 줄이고 동일 배터리 용량 대비 주행거리를 약 5% 이상 높였습니다.',
+        summary: [
+          '전기차 PE 시스템 에너지 효율은 85% 이상으로 내연기관(20~30%)을 압도하며 회생제동으로 에너지를 회수한다.',
+          'SiC 전력반도체 적용은 인버터 효율을 5% 이상 향상시켜 주행거리를 늘린다.',
+          '파워트레인 하드웨어는 모터·인버터·감속기를 일체화한 3-in-1 e-Axle로 진화하고 있다.'
+        ],
+        quiz: {
+          q: '기존 내연기관 엔진과 비교한 전기차 PE(Power Electric) 시스템의 에너지 효율 및 전력반도체 특성에 대한 설명으로 옳은 것은?',
+          options: [
+            '내연기관의 열효율은 85% 이상이고, 전기차 PE 시스템은 20~30% 수준이다.',
+            '전기차 PE 시스템의 에너지 효율은 85% 이상이며, SiC 전력반도체 적용 시 인버터 효율이 5% 이상 향상된다.',
+            '전기차는 감속 시 운동 에너지를 열로 방출하기 위해 회생제동을 사용하지 않는다.',
+            'e-Axle은 엔진, 변속기, 배기 머플러를 하나로 합친 내연기관 부품이다.'
+          ],
+          answer: 1,
+          explanation: '교재 p.66 및 p.68에 따르면 기존 내연기관은 열·마찰 손실로 에너지의 20~30%만 바퀴에 전달하는 반면, 전기차 PE 시스템은 85% 이상의 효율을 달성하며 SiC 전력반도체 적용을 통해 인버터 효율을 5% 이상 높입니다.'
+        }
+      },
+      {
+        id: 'ch3_2',
+        chapter: 'Chapter 03 - 3-2',
+        title: '섀시 도메인 변화 (X-by-Wire & VMC)',
+        subtitle: 'Steer/Brake-by-Wire, Active Suspension, 통합 차량 운동 제어(VMC) 및 Fail-Operational 이중화',
+        pages: 'p.71 ~ p.82',
+        objectives: [
+          '섀시 4대 핵심 시스템(동력전달, 현가, 조향, 제동)이 유압·기계식에서 X-by-Wire 전동화로 전환되는 이유를 이해한다.',
+          'Steer-by-Wire(SbW), Brake-by-Wire(BbW), Active Suspension의 작동 원리와 장점을 설명할 수 있다.',
+          '통합 차량 운동 제어(VMC)와 자율주행 Level 3+를 위한 Fail-Operational 이중화(Redundancy) 설계를 파악한다.'
+        ],
+        prerequisites: [
+          { term: 'X-by-Wire', desc: '조향(Steer), 제동(Brake) 등의 기계적 샤프트나 유압 파이프를 제거하고 전기 신호(Wire)와 모터 액추에이터로 제어하는 기술' },
+          { term: 'Fail-Operational (고장 작동 유지)', desc: '핵심 부품에 단일 고장이 발생하더라도 시스템이 즉시 정지하지 않고 백업 계통을 통해 정상 작동을 유지하는 안전 설계' }
+        ],
+        levels: {
+          basic: '과거 자동차의 핸들과 브레이크는 쇠막대(스티어링 칼럼)와 유압 파이프로 바퀴와 물리적으로 연결되어 있었습니다. 미래 자율주행차는 이를 전선(전기 신호)과 모터로 대체하는 "X-by-Wire" 기술을 도입해 응답 속도를 높이고 실내 공간 활용성을 극대화합니다.',
+          advanced: '① Steer-by-Wire(SbW): 핸들과 바퀴의 물리적 분리로 가변 조향비 구현 및 자율주행 시 스티어링 휠 수납 가능. ② Brake-by-Wire(BbW): 유압 대신 4륜 독립 모터 캘리퍼(EMB 등)로 제동 거리를 단축하고 회생제동 커플링 효율 극대화. ③ Active Suspension: 전동 액추에이터와 전자제어 댐퍼로 차체의 롤(좌우 기울기)과 피치(앞뒤 쏠림)를 능동 억제. ④ VMC(Vehicle Motion Control): 종방향(가/감속), 횡방향(조향), 수직방향(현가) 제어를 단일 통합 알고리즘으로 협조 제어.',
+          practical: '자율주행 Level 3 이상에서는 운전자가 전방을 주시하지 않으므로 시스템 고장 시 즉시 운전자가 개입할 수 없습니다. 따라서 제어기, 전원, 통신, 센서 및 액추에이터를 2중화(Redundancy)하는 Fail-Operational 설계(99.9% 이상 고신뢰성)가 필수이며, 고장 발생 시 백업 계통이 차량을 안전지대까지 비상 정차(MRM, Minimum Risk Maneuver)시킵니다.'
+        },
+        components: [
+          { name: 'Steer-by-Wire (SbW)', role: '스티어링 칼럼(기계 축) 제거. 전기 신호로 조향 액추에이터를 구동해 가변 조향비 및 콕핏 수납 구현.' },
+          { name: 'Brake-by-Wire (BbW)', role: '4륜 독립 전동 제동 제어. 밀리초(ms) 단위 초고속 응답으로 제동거리 단축 및 회생제동 협조 효율 극대화.' },
+          { name: 'VMC (통합 차량 운동 제어)', role: '종방향(구동/제동)·횡방향(조향)·수직방향(Active Suspension) 운동을 단일 도메인 제어기(DCU)에서 통합 제어.' },
+          { name: 'Fail-Operational 리던던시(Redundancy)', role: '전원·통신·제어기·액추에이터 이중화 설계. 단일 고장 시에도 비상 주행(MRM)으로 안전 확보.' }
+        ],
+        realCase: '현대모비스와 현대차그룹은 차세대 SDV 플랫폼에 4륜 독립 제어 e-코너 모듈 및 Steer-by-Wire, 듀얼 리던던시 제동 시스템을 개발·적용하여 자율주행 Level 3~4 안전 기준을 충족하고 있습니다.',
+        summary: [
+          '섀시 시스템은 기계·유압식(1세대) → 개별 전동화 EPS/EHB(2세대) → X-by-Wire & VMC 통합(3세대)으로 진화한다.',
+          'VMC는 종방향·횡방향·수직방향 차체 운동을 유기적으로 결합해 한계 선회 안정성과 승차감을 극대화한다.',
+          'Level 3+ 자율주행에는 고장 시에도 기능을 유지하는 Fail-Operational 이중화(Redundancy)가 필수적이다.'
+        ],
+        quiz: {
+          q: '자율주행 Level 3 이상에서 단일 하드웨어 고장이 발생하더라도 백업 제어계통이 즉시 개입해 안전지대까지 비상 주행(MRM)을 수행하도록 하는 설계 개념은?',
+          options: [
+            '크럼플 존 (Crumple Zone)',
+            '고장 대처 능동 리던던시 (Fail-Operational)',
+            '수동 유압 링크 (Manual Hydraulic Link)',
+            '단선 폴링 제어 (Single-Wire Polling)'
+          ],
+          answer: 1,
+          explanation: '교재 p.80에 따르면 고단계 자율주행(Level 3+)에서는 운전자의 즉각적 개입이 불가능하므로 제어기·전원·통신·액추에이터를 이중화하는 Fail-Operational 설계가 필수적입니다.'
+        }
+      },
+      {
+        id: 'ch3_3',
+        chapter: 'Chapter 03 - 3-3',
+        title: '바디 도메인 변화 (스마트 바디 & Zonal 제어)',
+        subtitle: 'BCM에서 Zonal 기반 바디 제어로 전환, 디지털 라이팅, 스마트 도어·시트·인클라이밋',
+        pages: 'p.83 ~ p.93',
+        objectives: [
+          '바디 도메인에서 Zonal 아키텍처 도입 시 와이어링 하네스 경량화(최대 50%) 및 OTA 확장성(95%+) 효과를 이해한다.',
+          '스마트 플러시 도어 핸들, 디지털 패턴 라이팅 그릴, 액티브 에어로 바디의 작동 원리를 설명할 수 있다.',
+          '생체 신호 감지 스마트 시트와 적외선·공기질 연동 스마트 인클라이밋(HVAC) 기술을 파악한다.'
+        ],
+        prerequisites: [
+          { term: 'BCM (Body Control Module)', desc: '도어 잠금, 와이퍼, 실내외 조명, 파워 윈도우 등 차량 바디 편의 장치를 총괄 제어하는 전자 모듈' },
+          { term: 'HVAC (Heating, Ventilation, and Air Conditioning)', desc: '차량 실내의 난방, 환기, 냉방 및 공기 정화를 담당하는 공조 시스템' }
+        ],
+        levels: {
+          basic: '과거에는 문짝, 시트, 조명마다 별도의 제어기와 긴 전선이 연결되어 있었습니다. 최신 차량은 구역별 Zone 제어기를 도입해 바디 배선 무게를 최대 50%까지 줄이고, 접근 시 튀어나오는 플러시 도어 핸들, LED 패턴 그릴, 승객 체온을 감지해 바람을 조절하는 AI 공조 장치 등 스마트 바디 기능을 구현합니다.',
+          advanced: '① 아키텍처 진화(p.92): 2010s Standalone(독립 BCM, CAN/LIN) → 2020s Domain Control(바디 DCU) → 2025s Zonal Integration(Zone Control Unit + 이더넷 + OTA) → 2030+ Full SDV Engine. ② OTA 기능 확장성(p.93): 기존 분산형 BCM(25%), Domain 통합형(70%) 대비 Zone 아키텍처 적용 차종은 출고 후 편의 기능의 95% 이상을 OTA로 업그레이드 가능.',
+          practical: '실차 바디 전장은 외부 공기역학 및 커뮤니케이션과 실내 웰니스 케어로 확장되고 있습니다. 외장에서는 스마트 플러시 도어 핸들(공기저항 저감), 디지털 패턴 라이팅(보행자·주변 차량 상태 표시), 액티브 에어로 플랩이 작동하며, 실내에서는 심박·호흡 감지 생체 신호 시트, 무중력 릴렉션 시트, 적외선 체온 센서·UV-C 살균 연동 스마트 인클라이밋(HVAC)이 통합 제어됩니다.'
+        },
+        components: [
+          { name: 'Zonal 기반 바디 제어기 (Zone ECU)', role: '전/후/좌/우 구역별 바디 장치 통합 제어. 바디 하네스 중량 최대 50% 절감 및 OTA 기능 확장성 95% 달성.' },
+          { name: '디지털 패턴 라이팅 & 플러시 도어 핸들', role: 'LED 매트릭스 그릴로 차량 상태 표현, 운전자 접근 감지 시 자동 돌출되는 공기역학적 도어 핸들.' },
+          { name: '생체 신호 & 릴렉션 스마트 시트', role: '심박수·호흡 센서로 운전자 피로도 모니터링, 무중력 자세 및 자율주행 대응 회전(Swivel) 지원.' },
+          { name: '스마트 인클라이밋 (지능형 HVAC)', role: '적외선 체온 센서, 미세먼지(PM2.5) 자율 정화, UV-C 살균, 앰비언트 라이팅 연동 실내 환경 제어.' }
+        ],
+        realCase: '기아 EV9과 현대 아이오닉 시리즈는 디지털 패턴 라이팅 그릴, 오토 플러시 도어 핸들, 릴렉션 컴포트 시트 및 OTA 기반 조명 패턴 추가(FoD) 기능을 상용화했습니다.',
+        summary: [
+          '바디 도메인에 Zone 아키텍처를 적용하면 배선 중량을 최대 50% 줄이고 편의 기능의 95% 이상을 OTA로 확장할 수 있다.',
+          '외장 바디는 디지털 라이팅과 액티브 에어로 메커니즘을 통해 지능화되고 있다.',
+          '실내 바디는 생체 신호 감지 시트와 적외선 체온 연동 HVAC를 통해 초개인화 웰니스 공간으로 진화한다.'
+        ],
+        quiz: {
+          q: '교재 p.93의 「OTA 기반 바디/편의 기능 확장성」 자료에 따르면, Zone 아키텍처 적용 차종이 출고 후 무선 업데이트(OTA)로 향상·추가할 수 있는 편의 기능 비율은?',
+          options: [
+            '약 10%',
+            '약 25% (기존 분산형 BCM 수준)',
+            '약 70% (Domain 통합형 수준)',
+            '95% 이상'
+          ],
+          answer: 3,
+          explanation: '교재 p.93 그래프에 따르면 기존 분산형 BCM 차종은 25%, Domain 통합형 차종은 70%, Zone 아키텍처 적용 차종은 95% 이상의 편의 기능을 OTA로 향상시키거나 신규 추가할 수 있습니다.'
+        }
+      },
+      {
+        id: 'ch3_4',
+        chapter: 'Chapter 03 - 3-4',
+        title: '인포테인먼트 도메인 변화 (디지털 콕핏 & AI UX)',
+        subtitle: '디지털 클러스터·IVI·AR-HUD 통합, 차량용 OS, 생성형 AI 비서 및 SDV 기반 구독 생태계',
+        pages: 'p.94 ~ p.104',
+        objectives: [
+          '인포테인먼트의 4세대 진화(단방향 미디어 → 스마트폰 연동 → 커넥티드 IVI → SDV & AI 콕핏)를 설명한다.',
+          '디지털 클러스터, AVN, AR-HUD를 단일 고성능 SoC로 통합하는 디지털 콕핏 구조를 이해한다.',
+          '차량용 OS 주도권 경쟁(Android Automotive, Apple CarPlay Ultra, OEM 독자 OS)과 In-Car 서비스 생태계를 파악한다.'
+        ],
+        prerequisites: [
+          { term: 'IVI (In-Vehicle Infotainment)', desc: '차량 내 운행 정보(Information)와 오락·미디어(Entertainment)를 통합 제공하는 시스템' },
+          { term: 'AR-HUD (Augmented Reality Head-Up Display)', desc: '전면 유리창에 내비게이션 경로와 위험 경고를 실제 도로와 겹쳐 입체적으로 투사하는 증강현실 표시장치' }
+        ],
+        levels: {
+          basic: '과거 자동차의 오디오와 내비게이션은 별도 버튼과 작은 화면으로 분리되어 있었습니다. 최신 디지털 콕핏은 계기판(클러스터), 중앙 화면(AVN), 증강현실 헤드업 디스플레이(AR-HUD)를 하나로 통합하고, 생성형 AI 음성 비서와 OTT·게임·결제 앱을 지원하는 스마트폰 같은 공간으로 변화했습니다.',
+          advanced: '① 세대별 진화(p.95): 1세대(AM/FM·CD 단방향) → 2세대(Apple CarPlay/Android Auto 스마트폰 미러링) → 3세대(클라우드 연결·OTA·기본 음성인식 커넥티드 IVI) → 4세대(생성형 AI 비서·중앙집중 OS·앱 생태계 SDV 콕핏). ② 시장 전망(p.101~102): 2028년 글로벌 신차 커넥티드 탑재율 85% 전망. 차량용 OS 점유율 전망은 Android Automotive(GAS) 48%, Apple CarPlay Ultra 28%, OEM 자체 독자 OS 24%.',
+          practical: '미래 SDV 기반 IVI는 중앙 집중형 도메인 컴퓨팅과 가상화 OS(Hypervisor)를 통해 안전 필수 영역(계기판 속도/경고)과 엔터테인먼트 영역(OTT/게이밍)을 하나의 칩에서 안전하게 분리 구동합니다. 이를 통해 인카 페이먼트(주차·충전 원터치 결제), FaaS(서비스로서의 기능) 구독 모델 등 지속적인 소프트웨어 수익을 창출합니다.'
+        },
+        components: [
+          { name: '통합 디지털 콕핏 & AR-HUD', role: '디지털 클러스터, 파노라믹 디스플레이, 증강현실 HUD를 고성능 AP/SoC로 통합해 시선 분산 최소화.' },
+          { name: '차량용 OS & 가상화 하이퍼바이저', role: 'Android Automotive(48%), CarPlay Ultra(28%), OEM 독자 OS(24% 전망). 안전 영역과 미디어 영역 독립 실행.' },
+          { name: '생성형 AI 에이전트 & 멀티모달 UX', role: '자연어 대화형 차량 제어, 운전자 프로필 자동 동기화, 음성·제스처·시선 추적 복합 인터랙션.' },
+          { name: 'In-Car 콘텐츠 & 페이먼트 생태계', role: '정차/충전 중 OTT 스트리밍, 콘솔급 게이밍, 주차·충전·드라이브스루 원터치 인카 페이먼트.' }
+        ],
+        realCase: '현대자동차그룹은 차세대 인포테인먼트 플랫폼 ccNC 및 Pleos 기반 차량용 OS를 통해 OTA 무선 업데이트, 생성형 AI 음성 비서, 블루링크 커넥티드 서비스 및 인카 페이먼트를 제공하고 있습니다.',
+        summary: [
+          '인포테인먼트는 파노라믹 멀티 스크린과 AR-HUD를 결합한 통합 디지털 콕핏으로 진화하고 있다.',
+          '2028년 글로벌 신차 커넥티드 탑재율은 85%에 달할 전망이며, 차량용 OS 주도권 경쟁이 치열하다.',
+          'SDV 기반 IVI는 OTA 상시 업데이트, 생성형 AI 초개인화 UX, 앱/구독형(FaaS) 비즈니스 모델을 구현한다.'
+        ],
+        quiz: {
+          q: '교재 p.102의 「차량용 OS 주도권 점유율 전망」에 제시된 수치가 올바르게 짝지어진 것은?',
+          options: [
+            'Android Automotive(GAS) 48% / Apple CarPlay Ultra 28% / OEM 자체 독자 OS 24%',
+            'OEM 자체 독자 OS 60% / Android Automotive(GAS) 25% / Apple CarPlay Ultra 15%',
+            'Apple CarPlay Ultra 50% / Android Automotive(GAS) 30% / OEM 자체 독자 OS 20%',
+            'Android Automotive(GAS) 70% / OEM 자체 독자 OS 20% / Apple CarPlay Ultra 10%'
+          ],
+          answer: 0,
+          explanation: '교재 p.102 차트에 따르면 차량용 OS 주도권 점유율 전망은 Android Automotive(GAS) 48%, Apple CarPlay Ultra 28%, OEM 자체 독자 OS 24%로 제시되어 있습니다.'
+        }
+      },
+      {
+        id: 'ch3_5',
+        chapter: 'Chapter 03 - 3-5',
+        title: 'ADAS 및 자율주행 도메인 변화',
+        subtitle: '자율주행 레벨(L2+~L5), Sensor Fusion vs Vision-Only, End-to-End AI 및 AIDV 시대',
+        pages: 'p.105 ~ p.121',
+        objectives: [
+          '자율주행 기술 단계(Level 2+, Level 3, Level 4/5)별 제어 주도권과 ODD(운행설계영역) 개념을 구분한다.',
+          '규칙 기반(Rule-based) 알고리즘에서 단일 신경망 기반 End-to-End(E2E) AI로의 전환 배경을 이해한다.',
+          '테슬라(Vision-Only), 웨이모(다중 센서 퓨전), 벤츠·현대차(L3 하이브리드)의 센서 구성 전략을 비교한다.'
+        ],
+        prerequisites: [
+          { term: 'ODD (Operational Design Domain, 운행설계영역)', desc: '자율주행 시스템이 안전하게 작동하도록 설계된 특정 도로, 속도, 기상 조건 범위' },
+          { term: '센서 퓨전 (Sensor Fusion)', desc: '카메라, 레이더, 라이다 등 서로 다른 센서의 데이터를 통합 분석해 단일 센서보다 정확한 인식 결과를 도출하는 기술' }
+        ],
+        levels: {
+          basic: 'ADAS(첨단 운전자 보조 시스템)는 차선 유지, 자동 긴급 제동 등으로 운전자를 돕는 기술이며, 이것이 고도화되면 자동차 스스로 주행하는 자율주행(Level 3~5)이 됩니다. 최신 자율주행은 여러 센서를 결합하는 "센서 퓨전" 방식과 카메라와 AI만으로 운전하는 "순수 비전(Vision-Only)" 방식으로 경쟁하며 발전하고 있습니다.',
+          advanced: '① 자율주행 레벨(p.109): Level 2+(고속도로/도심 보조, 운전자 주시 의무), Level 3(조건부 자율, ODD 내 시스템 주도 및 비상 시 운전자 인계 요구 TOC 필수), Level 4/5(무인 로보택시·셔틀, 파운데이션 AI 구동). ② End-to-End(E2E) AI(p.110): 기존 인지-판단-제어가 분리된 규칙 기반(Rule-based) 코드의 예외 상황(Edge Case) 한계를 극복하기 위해 카메라 원시(Raw) 데이터를 단일 신경망에 입력해 조향·가감속 명령을 직접 생성하며 정밀지도(HD Map) 의존도를 낮춤.',
+          practical: '글로벌 기업별 센서 전략(p.118~120): ① 테슬라(Vision-Only): 서라운드 카메라 8~9대(레이더·초음파 제거) + 대규모 실차 데이터 기반 E2E 신경망(FSD)으로 양산 원가 극대화. ② 웨이모(Level 4 다중 센서 퓨전): 고성능 라이다 5개 + 4D 레이더 6개 + 외부 카메라 29개로 360도 센서 중복성(Redundancy) 극대화. ③ 벤츠(Drive Pilot)·현대차그룹(G90 HDP): 전방 라이다(현대차 2개) + 4D 레이더 + 서라운드 카메라를 결합한 L3 하이브리드 이중 안전망 구축. 향후 4D 이미징 레이더와 저가형 솔리드스테이트 라이다 보급, AIDV(AI 정의 차량) 및 FoD/로보택시 비즈니스로 확장됩니다.'
+        },
+        components: [
+          { name: '중앙집중형 자율주행 컴퓨터 (HPC / HPVC)', role: '조널 게이트웨이에서 수집된 초고속 센서 데이터를 실시간 처리해 인지·판단·제어 연산 수행.' },
+          { name: 'End-to-End (E2E) AI 신경망', role: '인지-판단-제어를 단일 신경망으로 통합. 엣지 케이스(Edge Case) 대응력 강화 및 HD Map 의존도 축소.' },
+          { name: 'Vision-Only vs Multi-Sensor Fusion', role: '테슬라(카메라 8~9대 + E2E AI) vs 웨이모(라이다 5 + 4D 레이더 6 + 카메라 29) vs 현대차 HDP(라이다 2 + 4D 레이더 + 카메라).' },
+          { name: 'AIDV (AI-Defined Vehicle) & FoD', role: 'AI가 주행과 차량 기능을 정의하는 시대. 자율주행 구독(FoD), 로보택시, 정밀지도 데이터 서비스 창출.' }
+        ],
+        realCase: '현대차그룹 제네시스 G90 HDP(Highway Driving Pilot)는 전방 라이다 2개와 4D 레이더, 서라운드 카메라를 조합한 하이브리드 센서 퓨전과 Fail-Operational 이중화 설계를 통해 고속도로 조건부 자율주행 안전성을 확보했습니다.',
+        summary: [
+          '자율주행은 Level 2+(운전자 주시) → Level 3(조건부 자율, TOC 필요) → Level 4/5(완전 무인 자율주행)로 고도화된다.',
+          'End-to-End AI는 규칙 기반 알고리즘의 엣지 케이스 한계를 극복하기 위해 인지·판단·제어를 단일 신경망으로 통합한다.',
+          '테슬라의 Vision-Only(원가·양산성)와 웨이모·현대차의 센서 퓨전(안전 중복성) 전략이 경쟁하며 AIDV 시대로 나아가고 있다.'
+        ],
+        quiz: {
+          q: '교재 p.118~120에 소개된 글로벌 완성차 및 자율주행 기업의 센서 구성 전략 연결로 옳지 않은 것은?',
+          options: [
+            '테슬라(Vision-Only): 서라운드 고해상도 카메라 8~9대 탑재 및 레이더·초음파 센서 제거',
+            '웨이모(Level 4): 고성능 라이다 5개 + 4D 레이더 6개 + 외부 카메라 29개로 센서 중복성 극대화',
+            '현대자동차그룹(HDP): 전방 라이다 2개 + 4D 레이더 + 서라운드 카메라 결합 하이브리드 솔루션',
+            '메르세데스-벤츠(Drive Pilot): 라이다와 레이더를 모두 제거하고 오직 초음파 센서 4개로 L3 구현'
+          ],
+          answer: 3,
+          explanation: '교재 p.120에 따르면 메르세데스-벤츠(Drive Pilot)는 전면 라이다 1개, 장거리 레이더, 서라운드 카메라, 도로 습도 감지 센서 및 고정밀 GPS를 적용하여 고속도로 정체 시 Level 3 자율주행을 구현했습니다.'
+        }
+      }
+    ];
+
+    // 핵심 용어 사전 데이터 (교재 기반)
+    const GLOSSARY_ITEMS = [
+      { term: 'ECU', full: 'Electronic Control Unit (전자제어장치)', cat: 'E/E 아키텍처', def: '센서로부터 입력받은 데이터를 연산·판단하여 액추에이터에 제어 명령을 내리는 차량의 마이크로컨트롤러 기반 두뇌.' },
+      { term: '와이어링 하네스', full: 'Wiring Harness', cat: '차량 구성', def: '차량 내 100개 이상의 ECU와 센서·액추에이터에 전력과 신호를 공급하는 전선 뭉치. 총연장 2,000~5,000m, 무게 40~50kg에 달함.' },
+      { term: 'LiDAR', full: 'Light Detection and Ranging (라이다)', cat: '센서', def: '905nm 또는 1550nm 펄스 레이저를 발사해 반사되는 비행시간(ToF)을 측정하여 고정밀 3D 점군(Point Cloud) 지도를 생성하는 센서.' },
+      { term: 'Radar', full: 'Radio Detection and Ranging (레이더)', cat: '센서', def: '24GHz/77GHz 밀리미터파(mmWave) FMCW 전파와 도플러 효과를 이용해 악천후 속에서도 최대 ~300m 거리와 상대 속도를 측정하는 센서.' },
+      { term: 'HOD', full: 'Hands-Off Detection (핸즈오프 감지 센서)', cat: '센서', def: '스티어링 휠에 내장된 정전식 촉각 센서로 운전자가 핸들을 잡고 있는지 여부를 정밀 감지하여 ADAS 안전 제어를 보조.' },
+      { term: 'V2X', full: 'Vehicle to Everything (차량·사물 통신)', cat: '센서/통신', def: '차량 간(V2V), 도로 인프라(V2I), 보행자(V2P), 네트워크(V2N)와 통신해 시야 밖의 위험을 감지하는 초감각(6th Sense) 기술.' },
+      { term: 'DCU', full: 'Domain Control Unit (도메인 제어기)', cat: 'E/E 아키텍처', def: '파워트레인, 섀시, ADAS, 콕핏 등 유사 기능을 수행하는 개별 ECU들을 기능 영역별로 통합한 고성능 제어기.' },
+      { term: 'Zonal Architecture', full: '존 아키텍처 (구역 기반 통합 구조)', cat: 'E/E 아키텍처', def: '차량을 물리적 구역(전/후/좌/우)으로 나누어 Zone 제어기가 인근 장치를 통합하고 초고속 이더넷 백본으로 중앙 컴퓨터(HPC)에 연결하는 구조.' },
+      { term: 'SDV', full: 'Software-Defined Vehicle (소프트웨어 중심 자동차)', cat: 'E/E 아키텍처', def: '하드웨어와 소프트웨어를 완전히 분리하여 무선 업데이트(OTA)와 서비스 지향 아키텍처(SOA)로 출고 후에도 차량 기능을 지속 확장하는 자동차.' },
+      { term: 'CAN / CAN FD', full: 'Controller Area Network (Flexible Data-rate)', cat: '차량 통신', def: '메시지 ID 기반 우선순위 중재와 높은 에러 감지 기능을 갖춘 자동차 표준 멀티마스터 통신. 클래식 CAN은 최대 1Mbps, CAN FD는 5~8Mbps 지원.' },
+      { term: 'LIN', full: 'Local Interconnect Network', cat: '차량 통신', def: '최대 20kbps 속도의 초저비용 단선(Single-Wire) 서브 네트워크. Single Master / Multi Slave(최대 16노드) 방식으로 윈도우·시트 등 바디 제어에 사용.' },
+      { term: 'FlexRay', full: 'FlexRay Deterministic Network', cat: '차량 통신', def: '채널당 10Mbps(듀얼 20Mbps) 속도의 시간 동기화(TDMA) 기반 고신뢰 실시간 통신. X-by-Wire 섀시 제어에 적용.' },
+      { term: 'Automotive Ethernet', full: '차량용 이더넷 (100BASE-T1 / 1000BASE-T1)', cat: '차량 통신', def: 'Single Pair UTP 케이블로 100Mbps~10Gbps+ 대역폭(클래식 CAN 대비 1,000배)을 제공하여 ADAS 센서 융합 및 Zonal 백본을 담당.' },
+      { term: 'BMS', full: 'Battery Management System (배터리 관리 시스템)', cat: '배터리/전동화', def: '수백 개 배터리 셀의 전압·전류·온도를 감시하여 SOC·SOH를 추정하고 셀 밸런싱, 열관리 및 이상 시 고전압 차단을 수행하는 핵심 제어기.' },
+      { term: 'SOC & SOH', full: 'State of Charge / State of Health', cat: '배터리/전동화', def: 'SOC는 배터리의 현재 잔여 충전량 비율(%), SOH는 초기 신품 대비 현재 배터리의 수명·건강 상태 비율(%)을 의미.' },
+      { term: 'PE System', full: 'Power Electric System (전기차 구동 시스템)', cat: '파워트레인', def: '구동모터, 트랙션 인버터, 감속기로 구성된 전기차 핵심 동력 시스템. 내연기관(20~30%) 대비 85% 이상의 높은 에너지 효율 달성.' },
+      { term: 'VMC', full: 'Vehicle Motion Control (통합 차량 운동 제어)', cat: '섀시', def: '종방향(가/감속), 횡방향(조향), 수직방향(액티브 서스펜션) 제어를 단일 알고리즘으로 협조 제어해 한계 상황 안정성을 높이는 기술.' },
+      { term: 'Fail-Operational', full: '고장 대처 능동 리던던시 (이중화 설계)', cat: '섀시/자율주행', def: 'Level 3+ 자율주행에서 단일 고장이 발생해도 백업 전원·통신·제어기가 즉시 개입해 안전지대까지 비상 주행(MRM)을 완수하는 안전 구조.' },
+      { term: 'End-to-End AI', full: '단일 신경망 기반 자율주행 AI (E2E AI)', cat: 'ADAS/자율주행', def: '인지-판단-제어가 분리된 규칙 기반 코드 대신 센서 원시 데이터를 단일 딥러닝 신경망에 입력해 주행 제어 명령을 직접 생성하는 기술.' },
+      { term: 'AIDV', full: 'AI-Defined Vehicle (AI 정의 차량)', cat: 'ADAS/자율주행', def: 'SDV를 넘어 파운데이션 AI 모델이 자율주행과 초개인화 차량 경험을 실시간으로 정의하고 진화시키는 차세대 모빌리티 패러다임.' }
+    ];
+
+    // 고장 진단 실습 시나리오 (실습 F)
+    const DIAGNOSTIC_CASES = [
+      {
+        id: 'diag1',
+        title: '사례 01. 폭우 주행 중 전방 AEB(자동 긴급 제동) 경고등 점등',
+        symptom: '폭우가 쏟아지는 야간 고속도로 주행 중 계기판에 "전방 충돌방지 보조 제한" 메시지가 표시되었습니다. 진단기(OBD-II) 스캔 결과 전방 카메라 영상 신뢰도 저하 코드가 확인되었으나 전방 레이더는 정상 신호를 수신 중입니다.',
+        telemetry: { camera: '신호 불량 (빗방울 산란·저조도)', radar: '정상 (77GHz FMCW 수신 양호)', canBus: '정상 (Bus Load 32%)', battery: '정상 (14.2V)' },
+        options: [
+          '전방 레이더의 도플러 센서가 고장 났으므로 레이더 모듈을 즉시 교체한다.',
+          '가시광선 기반 카메라는 악천후·저조도에 물리적으로 취약하므로, 기상 독립성이 높은 레이더(Radar)와의 센서 퓨전 보완 로직 및 카메라 렌즈 발열·와이퍼 클리닝 계통을 점검한다.',
+          'LIN 통신 속도를 1Gbps로 상향하여 카메라 영상 데이터를 강제 전송한다.',
+          '배터리 SOC가 부족하므로 회생제동을 차단한다.'
+        ],
+        answer: 1,
+        reason: '교재 p.23·30에 따라 카메라는 조도와 날씨(폭우/야간)에 민감한 반면, 레이더(Radar)는 밀리미터파를 사용해 악천후에 매우 강합니다. 하드웨어 영구 파손이 아닌 기상 환경 한계 및 센서 퓨전/클리닝 계통 점검이 정확한 엔지니어링 진단입니다.'
+      },
+      {
+        id: 'diag2',
+        title: '사례 02. 엔진 ECU와 변속기 TCU 간 통신 두절 (CAN Bus-Off 발생)',
+        symptom: '차량 시동 후 계기판 RPM 게이지가 0으로 고정되고 변속 충격이 발생합니다. 오실로스코프 계측 결과 CAN-High와 CAN-Low 라인 간 전위차가 발생하지 않고 0V로 단락(Short)되어 있습니다.',
+        telemetry: { camera: '해당 없음', radar: '해당 없음', canBus: '오류 (CAN-H / CAN-L 단락, Bus-Off)', battery: '정상 (12.6V)' },
+        options: [
+          '와이어링 하네스의 CAN Dual-Wire(UTP) 배선 단락 및 종단 저항(120Ω) 이상 여부를 점검하고 손상된 하네스 구간을 수리한다.',
+          '사이드 미러용 LIN 단선 케이블을 엔진 ECU에 대신 연결한다.',
+          '인포테인먼트 디스플레이의 해상도를 낮춰 CAN 통신 부하를 줄인다.',
+          '800V 고전압 배터리를 400V로 강압한다.'
+        ],
+        answer: 0,
+        reason: '교재 p.8·42·46에 따라 파워트레인 제어는 Dual-Wire(UTP) 기반 CAN 통신으로 연결되며, 와이어링 하네스 단락으로 차동 신호가 붕괴되면 Bus-Off가 발생해 ECU 간 데이터 송수신이 중단됩니다.'
+      },
+      {
+        id: 'diag3',
+        title: '사례 03. BEV 급속 충전 중 충전 속도 급감 및 배터리 경고 알림',
+        symptom: '800V 초고속 충전기에서 충전 중 SOC 45% 구간에서 갑자기 충전 전력이 급감하며 BMS 경고등이 점등되었습니다. BMS 모니터링 데이터상 특정 셀 모듈 온도가 58°C까지 상승했고 수냉식 냉각수 유량 센서가 0 L/min을 가리킵니다.',
+        telemetry: { camera: '해당 없음', radar: '해당 없음', canBus: '정상 (BMS 경고 프레임 송신)', battery: '이상 (셀 온도 58°C / 수냉 펌프 유량 0)' },
+        options: [
+          'HEV용 공냉식 팬을 추가로 장착하고 충전을 강제로 350kW로 고정한다.',
+          'BMS가 열폭주(Thermal Runaway) 예방을 위해 출력을 제한한 정상 보호 동작이므로, 수냉식 쿨링 패브릭의 전동 워터펌프 및 냉각 밸브 고장을 점검한다.',
+          'SOH가 0%이므로 배터리 팩 전체를 폐기한다.',
+          'Steer-by-Wire 액추에이터의 조향비를 재설정한다.'
+        ],
+        answer: 1,
+        reason: '교재 p.59에 따라 급속 충전과 고출력을 다루는 BEV 배터리는 수냉식 열관리가 필수적이며, 냉각 계통 이상으로 온도가 급상승할 경우 BMS는 열폭주 전이를 막기 위해 충전 전류를 제한하거나 릴레이를 차단하는 안전 제어를 수행합니다.'
+      },
+      {
+        id: 'diag4',
+        title: '사례 04. 도어 잠금 해제 불가 및 파워 윈도우·사이드 미러 동시 미작동',
+        symptom: '스마트키로 운전석 도어 잠금 해제가 되지 않으며, 운전석 스위치로 창문(파워 윈도우)과 사이드 미러 조절이 모두 작동하지 않습니다. 메인 CAN 백본은 정상입니다.',
+        telemetry: { camera: '해당 없음', radar: '해당 없음', canBus: '정상 / 도어 LIN 서브 네트워크 응답 없음', battery: '정상 (12.5V)' },
+        options: [
+          '고전압 인버터의 SiC 전력반도체를 교체한다.',
+          '도어 제어 모듈(DCM)과 하위 액추에이터를 연결하는 LIN(Single-Wire) 통신선 단선 및 마스터 노드 전원 공급을 점검한다.',
+          '전방 LiDAR의 1550nm 레이저 발광부를 재보정한다.',
+          'AR-HUD의 투사 각도를 초기화한다.'
+        ],
+        answer: 1,
+        reason: '교재 p.43에 따르면 파워 윈도우, 사이드 미러, 도어 잠금 장치는 도어 제어 모듈(DCM)을 마스터로 하는 저비용 단선(Single-Wire) LIN 서브 네트워크로 제어되므로 LIN 버스 단선이나 마스터 전원 이상 시 하위 슬레이브 장치가 동시에 멈춥니다.'
+      }
+    ];
+
+    // 종합 평가 문제 Bank (다양한 유형: 객관식, OX, 용어연결, 작동원리, 실무판단)
+    const EXAM_QUESTIONS = [
+      {
+        id: 'ex1',
+        type: '객관식',
+        chapter: 'Chapter 01',
+        q: '일반 내연기관 승용차 1대에 들어가는 와이어링 하네스(Wiring Harness)의 총연장 길이와 무게로 교재에 명시된 수치는?',
+        options: ['길이 200~500m / 무게 5~10kg', '길이 2,000m~5,000m / 무게 40~50kg', '길이 10,000m / 무게 150kg', '길이 50m / 무게 2kg'],
+        answer: 1,
+        explanation: '교재 p.8에 따르면 현대 자동차 내부의 와이어링 하네스는 총연장 길이 약 2,000m~5,000m(약 3km), 전선 무게만 40~50kg에 이릅니다.'
+      },
+      {
+        id: 'ex2',
+        type: 'OX 문제',
+        chapter: 'Chapter 02 - 2-1',
+        q: '[OX] 라이다(LiDAR)는 밀리미터파 전파를 사용하므로 폭우나 짙은 안개 속에서도 전파 감쇄가 거의 없어 색상과 표지판 글씨를 완벽하게 인식한다.',
+        options: ['O (맞다)', 'X (틀리다)'],
+        answer: 1,
+        explanation: 'X입니다. 밀리미터파를 이용해 악천후에 강한 센서는 레이더(Radar)이며, 라이다(LiDAR)는 레이저 빔(ToF)을 사용해 3D 입체 지형은 정밀 측정하지만 비·눈·안개에 영향을 받고 색상/표지판 인식은 불가합니다(교재 p.23·30).'
+      },
+      {
+        id: 'ex3',
+        type: '작동 원리',
+        chapter: 'Chapter 02 - 2-2',
+        q: '분산형 ECU 아키텍처에서 존(Zonal) 아키텍처로 전환할 때 얻는 핵심 효과로 교재에 제시된 수치는?',
+        options: ['ECU 수 300개 이상으로 증가', '배선 길이 500m 이상 단축 및 하네스 중량 30% 이상 절감', '통신 속도를 20kbps로 하향 평준화', 'OTA 업데이트 기능 완전 제거'],
+        answer: 1,
+        explanation: '교재 p.36·37에 따르면 존(Zonal) 아키텍처는 물리적 구역(Zone)별 통합과 이더넷 백본을 통해 배선 길이를 500m 이상 단축하고 하네스 중량을 30% 이상 절감합니다.'
+      },
+      {
+        id: 'ex4',
+        type: '용어 연결',
+        chapter: 'Chapter 02 - 2-3',
+        q: '다음 중 통신 프로토콜과 그 물리계층 및 최대 전송 속도가 올바르게 연결된 것은?',
+        options: [
+          'LIN — Dual Wire UTP / 10 Mbps',
+          'CAN FD — Single Wire / 20 kbps',
+          'FlexRay — 듀얼 채널 20 Mbps / TDMA 기반 높은 결정론',
+          'Automotive Ethernet — Single Wire / 1 Mbps'
+        ],
+        answer: 2,
+        explanation: '교재 p.44~46에 따르면 FlexRay는 채널당 10Mbps(듀얼 채널 구성 시 20Mbps)이며 TDMA 기반의 높은 결정론과 하드웨어 이중화를 지원합니다.'
+      },
+      {
+        id: 'ex5',
+        type: '수치 비교',
+        chapter: 'Chapter 02 - 2-4',
+        q: '교재 p.58의 「차종별 배터리 용량 및 전압 비교」 기준, 순수전기차(BEV: 77.4kWh/800V)의 배터리 용량은 일반 하이브리드(HEV: 1.6kWh/240V) 대비 약 몇 배 큰가?',
+        options: ['약 5~8배', '약 15~20배', '약 45~50배 이상', '약 200배'],
+        answer: 2,
+        explanation: '교재 p.58 분석 시사점에 명시된 대로 77.4kWh BEV 배터리는 1.6kWh HEV 배터리 대비 약 45~50배 이상 큽니다.'
+      },
+      {
+        id: 'ex6',
+        type: '실무 판단',
+        chapter: 'Chapter 03 - 3-1',
+        q: '전기차 인버터에 기존 실리콘(Si) 대신 SiC(탄화규소) 전력반도체를 적용했을 때의 실무적 효과는?',
+        options: [
+          '인버터 효율이 5% 이상 향상되어 동일 배터리 용량으로도 주행거리가 연장된다.',
+          '엔진오일 교환 주기가 2배로 늘어난다.',
+          '배터리 전압이 12V로 낮아져 급속 충전이 불가능해진다.',
+          '회생제동 기능이 비활성화된다.'
+        ],
+        answer: 0,
+        explanation: '교재 p.68에 따르면 SiC 전력반도체 적용 시 인버터의 전력 변환 효율이 5% 이상 향상되어 동일 배터리 용량으로도 주행거리를 연장할 수 있습니다.'
+      },
+      {
+        id: 'ex7',
+        type: '작동 원리',
+        chapter: 'Chapter 03 - 3-2',
+        q: '차량의 종방향(가/감속), 횡방향(조향), 수직방향(서스펜션) 운동 제어를 단일 통합 알고리즘으로 유기적으로 결합하여 제어하는 기술은?',
+        options: ['BCM (Body Control Module)', 'VMC (통합 차량 운동 제어)', 'OBC (On-Board Charger)', 'ISP (Image Signal Processor)'],
+        answer: 1,
+        explanation: '교재 p.78에 따르면 통합 차량 운동 제어(VMC)는 종방향·횡방향·수직방향 운동을 단일 알고리즘으로 협조 제어하여 한계 선회 상황에서도 최상의 주행 안정성을 보장합니다.'
+      },
+      {
+        id: 'ex8',
+        type: 'OX 문제',
+        chapter: 'Chapter 03 - 3-5',
+        q: '[OX] End-to-End(E2E) AI 자율주행 방식은 인지-판단-제어를 수만 줄의 규칙 기반(Rule-based) if-else 코드로 엄격히 분리하여 정밀지도(HD Map) 의존도를 100%로 높이는 기술이다.',
+        options: ['O (맞다)', 'X (틀리다)'],
+        answer: 1,
+        explanation: 'X입니다. 교재 p.110에 따르면 End-to-End(E2E) AI는 기존 규칙 기반(Rule-based) 코드의 예외 상황(Edge Case) 한계를 극복하기 위해 인지-판단-제어를 단일 신경망으로 통합하고 정밀지도(HD Map) 의존도를 낮추는 혁신 기술입니다.'
+      }
+    ];
+
+    /*************************************************************************
+     * 2. STATE MANAGEMENT & PERSISTENCE (새로고침 후에도 학습 데이터 유지)
+     *************************************************************************/
+    const STORAGE_KEY = 'hyundai_hint_edu_state_v1';
+
+    const defaultState = {
+      currentRoute: 'dashboard',
+      activeChapterId: 'ch1',
+      activeLabId: 'labA',
+      completedChapters: [], // ['ch1', ...]
+      quizScores: {}, // { ch1: 100, exam: 87.5 }
+      wrongNotes: [], // [{ id, q, userAns, correctAns, explanation, chapter }]
+      recentActivities: [
+        { time: '방금 전', text: '현대 HINT 자동차 전장 시스템 교육 플랫폼 접속' }
+      ],
+      simTelemetry: {
+        speed: 65,
+        steerAngle: 0,
+        weather: 'clear',
+        driveMode: 'EV_CRUISE',
+        soc: 78
+      }
+    };
+
+    let appState = loadState();
+
+    function loadState() {
+      try {
+        const saved = localStorage.getItem(STORAGE_KEY);
+        if (saved) {
+          return { ...defaultState, ...JSON.parse(saved) };
+        }
+      } catch (e) {
+        console.warn('저장된 학습 기록을 불러오는 중 오류가 발생했습니다.', e);
+      }
+      return { ...defaultState };
+    }
+
+    function saveState() {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(appState));
+        updateGlobalProgressUI();
+      } catch (e) {
+        showToast('⚠️ 브라우저 저장 공간 제한으로 학습 기록 저장에 실패했습니다.');
+      }
+    }
+
+    function logActivity(text) {
+      const now = new Date();
+      const timeStr = `${String(now.getHours()).padStart(2, '0')}:${String(now.getMinutes()).padStart(2, '0')}`;
+      appState.recentActivities.unshift({ time: timeStr, text });
+      if (appState.recentActivities.length > 15) appState.recentActivities.pop();
+      saveState();
+    }
+
+    function showToast(msg, icon = '✅') {
+      const box = document.getElementById('toastBox');
+      document.getElementById('toastIcon').textContent = icon;
+      document.getElementById('toastMessage').textContent = msg;
+      box.classList.remove('hidden');
+      clearTimeout(window._toastTimer);
+      window._toastTimer = setTimeout(() => {
+        box.classList.add('hidden');
+      }, 3200);
+    }
+
+    function openModal(id) {
+      const el = document.getElementById(id);
+      if (el) { el.classList.remove('hidden'); el.classList.add('flex'); }
+    }
+    function closeModal(id) {
+      const el = document.getElementById(id);
+      if (el) { el.classList.add('hidden'); el.classList.remove('flex'); }
+    }
+
+    function updateGlobalProgressUI() {
+      const pct = Math.round((appState.completedChapters.length / CURRICULUM.length) * 100);
+      const bar = document.getElementById('sidebarProgressBar');
+      const txt = document.getElementById('sidebarProgressText');
+      if (bar) bar.style.width = `${pct}%`;
+      if (txt) txt.textContent = `${pct}% (${appState.completedChapters.length}/${CURRICULUM.length})`;
+    }
+
+    /*************************************************************************
+     * 3. NAVIGATION & ROUTER
+     *************************************************************************/
+    const ROUTE_NAMES = {
+      dashboard: '1. 메인 대시보드',
+      roadmap: '2. 학습 로드맵',
+      theory: '3. 이론 학습 (교재 커리큘럼)',
+      lab: '4. 인터랙티브 실습실 (A ~ F)',
+      simulator: '5. 자동차 시스템 통합 시뮬레이터',
+      quiz: '6. 퀴즈 및 종합 평가',
+      glossary: '7. 핵심 용어 사전',
+      records: '8. 나의 학습 기록 & 오답 노트'
+    };
+
+    function navigate(route, param = null) {
+      appState.currentRoute = route;
+      if (route === 'theory' && param) appState.activeChapterId = param;
+      if (route === 'lab' && param) appState.activeLabId = param;
+      saveState();
+
+      // Update Nav Buttons
+      document.querySelectorAll('.nav-btn').forEach(btn => {
+        const isActive = btn.dataset.route === route;
+        btn.className = isActive
+          ? 'nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-bold transition text-left bg-gradient-to-r from-hyundai-blue/25 to-sky-900/20 text-hyundai-blue border border-hyundai-blue/40 shadow-sm'
+          : 'nav-btn w-full flex items-center gap-3 px-3.5 py-2.5 rounded-xl text-sm font-medium transition text-left text-slate-300 hover:bg-hyundai-card hover:text-white';
+      });
+
+      document.getElementById('breadcrumbText').textContent = ROUTE_NAMES[route] || route;
+
+      // Close mobile sidebar
+      document.getElementById('sidebar').classList.add('-translate-x-full');
+      document.getElementById('sidebarOverlay').classList.add('hidden');
+
+      renderCurrentRoute();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    document.querySelectorAll('.nav-btn').forEach(btn => {
+      btn.addEventListener('click', () => navigate(btn.dataset.route));
+    });
+    document.getElementById('mobileMenuBtn').addEventListener('click', () => {
+      document.getElementById('sidebar').classList.remove('-translate-x-full');
+      document.getElementById('sidebarOverlay').classList.remove('hidden');
+    });
+    document.getElementById('closeSidebarBtn').addEventListener('click', () => {
+      document.getElementById('sidebar').classList.add('-translate-x-full');
+      document.getElementById('sidebarOverlay').classList.add('hidden');
+    });
+    document.getElementById('sidebarOverlay').addEventListener('click', () => {
+      document.getElementById('sidebar').classList.add('-translate-x-full');
+      document.getElementById('sidebarOverlay').classList.add('hidden');
+    });
+
+    function renderCurrentRoute() {
+      const container = document.getElementById('appContainer');
+      switch (appState.currentRoute) {
+        case 'dashboard': container.innerHTML = renderDashboard(); break;
+        case 'roadmap': container.innerHTML = renderRoadmap(); break;
+        case 'theory': container.innerHTML = renderTheory(); initTheoryInteractions(); break;
+        case 'lab': container.innerHTML = renderLab(); initLabInteractions(); break;
+        case 'simulator': container.innerHTML = renderSimulator(); initSimulatorInteractions(); break;
+        case 'quiz': container.innerHTML = renderQuiz(); initQuizInteractions(); break;
+        case 'glossary': container.innerHTML = renderGlossary(); initGlossaryInteractions(); break;
+        case 'records': container.innerHTML = renderRecords(); break;
+        default: container.innerHTML = renderDashboard();
+      }
+    }
+
+    /*************************************************************************
+     * 4. VIEW 1: MAIN DASHBOARD
+     *************************************************************************/
+    function renderDashboard() {
+      const totalModules = CURRICULUM.length;
+      const completedCount = appState.completedChapters.length;
+      const progressPct = Math.round((completedCount / totalModules) * 100);
+      const scoreValues = Object.values(appState.quizScores);
+      const avgScore = scoreValues.length ? Math.round(scoreValues.reduce((a, b) => a + b, 0) / scoreValues.length) : 0;
+
+      // Chapter progress breakdown
+      const ch1Done = CURRICULUM.filter(c => c.id === 'ch1' && appState.completedChapters.includes(c.id)).length;
+      const ch2List = CURRICULUM.filter(c => c.id.startsWith('ch2'));
+      const ch2Done = ch2List.filter(c => appState.completedChapters.includes(c.id)).length;
+      const ch3List = CURRICULUM.filter(c => c.id.startsWith('ch3'));
+      const ch3Done = ch3List.filter(c => appState.completedChapters.includes(c.id)).length;
+
+      const coreQuestions = [
+        { q: '자동차의 센서는 어떤 정보를 수집하는가?', ch: 'ch2_1', lab: 'labA', tag: '카메라·LiDAR·Radar·초음파' },
+        { q: 'ECU는 센서 데이터를 어떻게 처리하는가?', ch: 'ch2_1', lab: 'labB', tag: '입력 → 판단 → 액추에이터' },
+        { q: 'CAN 통신은 왜 필요한가?', ch: 'ch2_3', lab: 'labC', tag: '멀티마스터·ID 중재·하네스 절감' },
+        { q: '차량의 E/E 아키텍처는 왜 변화하고 있는가?', ch: 'ch2_2', lab: 'labB', tag: '분산형 → 도메인 → Zonal & SDV' },
+        { q: '전기차의 BMS는 어떤 역할을 하는가?', ch: 'ch2_4', lab: 'labD', tag: 'SOC/SOH·셀밸런싱·열폭주 방지' },
+        { q: '자율주행 시스템에서 센서와 전장 시스템은 어떻게 연결되는가?', ch: 'ch3_5', lab: 'labE', tag: '센서 퓨전·이더넷 백본·HPC' }
+      ];
+
+      return `
+        <!-- Hero Engineering Banner -->
+        <section class="relative overflow-hidden rounded-2xl bg-gradient-to-r from-hyundai-navy via-[#0A2540] to-hyundai-panel border border-sky-800/50 p-6 sm:p-8 shadow-xl">
+          <div class="relative z-10 flex flex-col lg:flex-row lg:items-center justify-between gap-6">
+            <div class="space-y-3 max-w-2xl">
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-hyundai-blue/20 border border-hyundai-blue/40 text-hyundai-blue text-xs font-bold">
+                <span>HYUNDAI K-NEW DEAL ACADEMY</span>
+                <span>•</span>
+                <span>모빌리티 AI 전장 트랙</span>
+              </div>
+              <h1 class="text-2xl sm:text-3xl font-extrabold text-white tracking-tight leading-snug">
+                자동차 전장 시스템의 이해<br/>
+                <span class="text-hyundai-blue">인터랙티브 엔지니어링 실습 플랫폼</span>
+              </h1>
+              <p class="text-xs sm:text-sm text-slate-300 leading-relaxed">
+                「02. 자동차전장시스템이해.pdf」 교재를 기반으로 비전공자부터 자율주행·전동화 직무 준비생까지 
+                <strong>부품 구조도, 센서·통신 시뮬레이터, 고장 진단 실습</strong>을 통해 체계적으로 마스터하세요.
+              </p>
+              <div class="pt-2 flex flex-wrap gap-3">
+                <button onclick="navigate('theory', '${appState.activeChapterId}')" class="px-5 py-2.5 rounded-xl bg-hyundai-blue hover:bg-sky-400 text-slate-950 font-bold text-xs sm:text-sm transition shadow-lg shadow-sky-950">
+                  📘 이론 학습 시작하기
+                </button>
+                <button onclick="navigate('lab', 'labA')" class="px-5 py-2.5 rounded-xl bg-hyundai-card hover:bg-slate-800 text-white border border-hyundai-border font-semibold text-xs sm:text-sm transition">
+                  🔬 6대 인터랙티브 실습실
+                </button>
+                <button onclick="navigate('simulator')" class="px-5 py-2.5 rounded-xl bg-hyundai-card hover:bg-slate-800 text-sky-300 border border-sky-800/60 font-semibold text-xs sm:text-sm transition">
+                  🚘 통합 차량 시뮬레이터
+                </button>
+              </div>
+            </div>
+
+            <!-- Live Vehicle Telemetry Preview Widget -->
+            <div class="bg-hyundai-dark/80 backdrop-blur border border-hyundai-border rounded-2xl p-4 sm:p-5 w-full lg:w-80 space-y-3">
+              <div class="flex items-center justify-between text-xs">
+                <span class="text-slate-400 font-semibold">SDV E/E ARCHITECTURE STATUS</span>
+                <span class="px-2 py-0.5 rounded bg-emerald-500/20 text-emerald-400 font-mono text-[11px]">ONLINE</span>
+              </div>
+              <div class="grid grid-cols-2 gap-2.5 text-xs">
+                <div class="p-2.5 rounded-xl bg-hyundai-card border border-hyundai-border">
+                  <div class="text-slate-400 text-[11px]">총 커리큘럼</div>
+                  <div class="text-base font-extrabold text-white mt-0.5">3 Chapters / 10강</div>
+                </div>
+                <div class="p-2.5 rounded-xl bg-hyundai-card border border-hyundai-border">
+                  <div class="text-slate-400 text-[11px]">인터랙티브 실습</div>
+                  <div class="text-base font-extrabold text-hyundai-blue mt-0.5">6 Labs + 통합시뮬</div>
+                </div>
+                <div class="p-2.5 rounded-xl bg-hyundai-card border border-hyundai-border">
+                  <div class="text-slate-400 text-[11px]">배선 경량화(Zonal)</div>
+                  <div class="text-base font-extrabold text-emerald-400 mt-0.5">-30% ~ -50%</div>
+                </div>
+                <div class="p-2.5 rounded-xl bg-hyundai-card border border-hyundai-border">
+                  <div class="text-slate-400 text-[11px]">PE 구동 효율</div>
+                  <div class="text-base font-extrabold text-amber-400 mt-0.5">85%+ (800V)</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 4 Key KPI Cards -->
+        <section class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          <div class="bg-hyundai-panel border border-hyundai-border rounded-2xl p-5">
+            <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
+              <span>전체 학습 진도율</span>
+              <span class="text-hyundai-blue font-bold">PROGRESS</span>
+            </div>
+            <div class="text-2xl font-extrabold text-white font-mono">${progressPct}%</div>
+            <div class="mt-2 w-full h-2 bg-slate-800 rounded-full overflow-hidden">
+              <div class="h-full bg-hyundai-blue" style="width: ${progressPct}%"></div>
+            </div>
+            <div class="mt-2 text-[11px] text-slate-400">완료 모듈: ${completedCount} / ${totalModules}개</div>
+          </div>
+
+          <div class="bg-hyundai-panel border border-hyundai-border rounded-2xl p-5">
+            <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
+              <span>퀴즈 평균 점수</span>
+              <span class="text-emerald-400 font-bold">SCORE</span>
+            </div>
+            <div class="text-2xl font-extrabold text-white font-mono">${avgScore}점</div>
+            <div class="mt-2 text-[11px] text-slate-400">응시 완료 평가: ${scoreValues.length}건</div>
+            <button onclick="navigate('quiz')" class="mt-2 text-xs text-hyundai-blue hover:underline font-semibold">종합 평가 응시하기 →</button>
+          </div>
+
+          <div class="bg-hyundai-panel border border-hyundai-border rounded-2xl p-5">
+            <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
+              <span>저장된 오답 노트</span>
+              <span class="text-rose-400 font-bold">REVIEW</span>
+            </div>
+            <div class="text-2xl font-extrabold text-white font-mono">${appState.wrongNotes.length}문제</div>
+            <div class="mt-2 text-[11px] text-slate-400">틀린 문제 자동 기록 및 재학습</div>
+            <button onclick="navigate('records')" class="mt-2 text-xs text-rose-400 hover:underline font-semibold">오답 노트 복습하기 →</button>
+          </div>
+
+          <div class="bg-hyundai-panel border border-hyundai-border rounded-2xl p-5">
+            <div class="flex items-center justify-between text-xs text-slate-400 mb-2">
+              <span>단원별 완료 현황</span>
+              <span class="text-amber-400 font-bold">CHAPTERS</span>
+            </div>
+            <div class="space-y-1.5 text-xs mt-1">
+              <div class="flex justify-between"><span>Ch.01 전장 구성</span><span class="font-mono text-sky-300">${ch1Done}/1</span></div>
+              <div class="flex justify-between"><span>Ch.02 작동 구조</span><span class="font-mono text-sky-300">${ch2Done}/${ch2List.length}</span></div>
+              <div class="flex justify-between"><span>Ch.03 도메인 변화</span><span class="font-mono text-sky-300">${ch3Done}/${ch3List.length}</span></div>
+            </div>
+          </div>
+        </section>
+
+        <!-- 6 Core Mastery Questions (목표 달성 체크리스트) -->
+        <section class="bg-hyundai-panel border border-hyundai-border rounded-2xl p-6 space-y-4">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-2">
+            <div>
+              <h2 class="text-lg font-bold text-white">🎯 최종 학습 목표: 스스로 답할 수 있어야 할 6대 핵심 질문</h2>
+              <p class="text-xs text-slate-400">질문을 클릭하면 해당 이론 강의 또는 인터랙티브 실습실로 바로 연결됩니다.</p>
+            </div>
+          </div>
+          <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            ${coreQuestions.map((item, idx) => `
+              <div class="bg-hyundai-card border border-hyundai-border hover:border-hyundai-blue/70 rounded-xl p-4 flex flex-col justify-between transition group">
+                <div>
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-[11px] font-mono font-bold px-2 py-0.5 rounded bg-hyundai-navy text-sky-300">Q0${idx + 1}</span>
+                    <span class="text-[11px] text-slate-400">${item.tag}</span>
+                  </div>
+                  <h3 class="text-sm font-bold text-white group-hover:text-hyundai-blue transition leading-snug">${item.q}</h3>
+                </div>
+                <div class="mt-4 pt-3 border-t border-hyundai-border/70 flex items-center gap-2">
+                  <button onclick="navigate('theory', '${item.ch}')" class="flex-1 py-1.5 rounded-lg bg-slate-800 hover:bg-slate-700 text-xs font-semibold text-slate-200 transition">📘 이론 보기</button>
+                  <button onclick="navigate('lab', '${item.lab}')" class="flex-1 py-1.5 rounded-lg bg-hyundai-blue/20 hover:bg-hyundai-blue/30 text-xs font-semibold text-hyundai-blue transition">🔬 실습하기</button>
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </section>
+
+        <!-- Interactive Labs Quick Launch + Recent Logs -->
+        <section class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <div class="lg:col-span-2 bg-hyundai-panel border border-hyundai-border rounded-2xl p-6 space-y-4">
+            <div class="flex items-center justify-between">
+              <h2 class="text-lg font-bold text-white">🔬 인터랙티브 실습실 바로가기 (Lab A ~ F)</h2>
+              <button onclick="navigate('lab')" class="text-xs text-hyundai-blue font-semibold hover:underline">전체 실습실 →</button>
+            </div>
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+              ${[
+                { id: 'labA', title: '실습 A. 센서 작동 시뮬레이터', desc: '카메라·LiDAR·Radar·초음파 거리/악천후 인식 비교' },
+                { id: 'labB', title: '실습 B. ECU 제어 시스템 시뮬레이터', desc: '센서 입력 → ECU 판단 → 액추에이터 출력 실시간 루프' },
+                { id: 'labC', title: '실습 C. CAN 통신 시뮬레이터', desc: '송수신 ECU, ID 우선순위 중재, 프레임 및 Bus-Off 오류' },
+                { id: 'labD', title: '실습 D. 전기차 배터리 & BMS 시뮬레이터', desc: '충전/방전, 회생제동, 400V/800V, 셀 온도·SOC 모니터링' },
+                { id: 'labE', title: '실습 E. 자율주행 센서 퓨전', desc: '개별 센서 한계 극복 및 다중 센서 통합 객체 인식 시각화' },
+                { id: 'labF', title: '실습 F. 자동차 전장 고장 진단', desc: '실차 고장 증상 및 텔레메트리 분석 후 원인·해결책 추론' }
+              ].map(lab => `
+                <button onclick="navigate('lab', '${lab.id}')" class="text-left p-4 rounded-xl bg-hyundai-card border border-hyundai-border hover:border-hyundai-blue transition">
+                  <div class="text-sm font-bold text-white">${lab.title}</div>
+                  <div class="text-xs text-slate-400 mt-1">${lab.desc}</div>
+                </button>
+              `).join('')}
+            </div>
+          </div>
+
+          <div class="bg-hyundai-panel border border-hyundai-border rounded-2xl p-6 space-y-4">
+            <h2 class="text-lg font-bold text-white">🕒 최근 학습 기록</h2>
+            <div class="space-y-2.5 max-h-72 overflow-y-auto pr-1">
+              ${appState.recentActivities.map(act => `
+                <div class="p-3 rounded-xl bg-hyundai-card/70 border border-hyundai-border text-xs flex items-start gap-2.5">
+                  <span class="font-mono text-hyundai-blue font-semibold shrink-0">${act.time}</span>
+                  <span class="text-slate-300 leading-relaxed">${act.text}</span>
+                </div>
+              `).join('')}
+            </div>
+          </div>
+        </section>
+      `;
+    }
+
+    /*************************************************************************
+     * 5. VIEW 2: LEARNING ROADMAP
+     *************************************************************************/
+    function renderRoadmap() {
+      const chapters = [
+        { num: 'CHAPTER 01', title: '자동차 전장 시스템의 구성', desc: '차량 전체 구조, 4대 부품군 비중, 와이어링 하네스, 내연기관(ICE) vs 순수전기차(BEV) 구조 비교', items: CURRICULUM.filter(c => c.id === 'ch1') },
+        { num: 'CHAPTER 02', title: '전장 시스템의 작동 구조', desc: '센서 시스템(오감·초감각), E/E 아키텍처(분산·DCU·Zonal·SDV), 차량 통신(LIN·CAN·FlexRay·Ethernet), 배터리 & BMS', items: CURRICULUM.filter(c => c.id.startsWith('ch2')) },
+        { num: 'CHAPTER 03', title: '도메인별 전장 시스템 분류', desc: '파워트레인(PE·SiC), 섀시(X-by-Wire·VMC·Fail-Operational), 바디(Zonal·스마트바디), 인포테인먼트(디지털콕핏·OS), ADAS/자율주행(E2E AI·AIDV)', items: CURRICULUM.filter(c => c.id.startsWith('ch3')) }
+      ];
+
+      return `
+        <div class="space-y-6">
+          <div class="bg-hyundai-panel border border-hyundai-border rounded-2xl p-6">
+            <h1 class="text-2xl font-extrabold text-white">🗺️ 단계별 학습 로드맵 (비전공자 → 모빌리티 전장 엔지니어)</h1>
+            <p class="text-xs sm:text-sm text-slate-300 mt-1.5">
+              교재 「02. 자동차전장시스템이해.pdf」의 원래 목차 순서를 그대로 유지하며, 기초 하드웨어 구성부터 차세대 SDV·자율주행 아키텍처까지 단계적으로 학습합니다.
+            </p>
+          </div>
+
+          <div class="space-y-6">
+            ${chapters.map(ch => `
+              <div class="bg-hyundai-panel border border-hyundai-border rounded-2xl p-6 space-y-4">
+                <div class="border-b border-hyundai-border pb-4">
+                  <span class="text-xs font-mono font-bold text-hyundai-blue">${ch.num}</span>
+                  <h2 class="text-xl font-bold text-white mt-0.5">${ch.title}</h2>
+                  <p class="text-xs text-slate-400 mt-1">${ch.desc}</p>
+                </div>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  ${ch.items.map(mod => {
+                    const isDone = appState.completedChapters.includes(mod.id);
+                    return `
+                      <div class="p-4 rounded-xl bg-hyundai-card border ${isDone ? 'border-emerald-500/50' : 'border-hyundai-border'} flex flex-col justify-between gap-3">
+                        <div>
+                          <div class="flex items-center justify-between gap-2">
+                            <span class="text-xs font-mono text-sky-300">${mod.chapter} (${mod.pages})</span>
+                            ${isDone
+                              ? '<span class="px-2 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-[11px] font-bold">✓ 학습 완료</span>'
+                              : '<span class="px-2 py-0.5 rounded-full bg-slate-800 text-slate-400 text-[11px]">학습 대기</span>'}
+                          </div>
+                          <h3 class="text-base font-bold text-white mt-1">${mod.title}</h3>
+                          <p class="text-xs text-slate-400 mt-1 leading-relaxed">${mod.subtitle}</p>
+                        </div>
+                        <button onclick="navigate('theory', '${mod.id}')" class="w-full py-2 rounded-lg bg-hyundai-blue/20 hover:bg-hyundai-blue text-hyundai-blue hover:text-slate-950 font-bold text-xs transition">
+                          강의실 입장하기 →
+                        </button>
+                      </div>
+                    `;
+                  }).join('')}
+                </div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    /*************************************************************************
+     * 6. VIEW 3: THEORY LEARNING (10-STEP STANDARD LECTURE TEMPLATE)
+     *************************************************************************/
+    function renderTheory() {
+      const idx = CURRICULUM.findIndex(c => c.id === appState.activeChapterId);
+      const mod = CURRICULUM[idx >= 0 ? idx : 0];
+      const prevMod = idx > 0 ? CURRICULUM[idx - 1] : null;
+      const nextMod = idx < CURRICULUM.length - 1 ? CURRICULUM[idx + 1] : null;
+      const isDone = appState.completedChapters.includes(mod.id);
+
+      return `
+        <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+          <!-- Left Curriculum Index -->
+          <div class="lg:col-span-3 space-y-2">
+            <div class="bg-hyundai-panel border border-hyundai-border rounded-2xl p-4">
+              <div class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-3">커리큘럼 목차 (10강)</div>
+              <div class="space-y-1.5">
+                ${CURRICULUM.map(c => {
+                  const active = c.id === mod.id;
+                  const done = appState.completedChapters.includes(c.id);
+                  return `
+                    <button onclick="navigate('theory', '${c.id}')" class="w-full text-left px-3 py-2.5 rounded-xl text-xs transition flex items-center justify-between gap-2 ${active ? 'bg-hyundai-blue text-slate-950 font-bold' : 'bg-hyundai-card/60 text-slate-300 hover:bg-hyundai-card'}">
+                      <span class="truncate">${c.chapter.replace('Chapter ', 'Ch.')} ${c.title}</span>
+                      ${done ? `<span class="${active ? 'text-slate-950' : 'text-emerald-400'} font-bold">✓</span>` : ''}
+                    </button>
+                  `;
+                }).join('')}
+              </div>
+            </div>
+          </div>
+
+          <!-- Right 10-Step Lecture Content -->
+          <div class="lg:col-span-9 space-y-6">
+            <!-- Header -->
+            <div class="bg-hyundai-panel border border-hyundai-border rounded-2xl p-6">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <span class="px-2.5 py-1 rounded-md bg-hyundai-navy text-sky-300 font-mono text-xs font-bold">${mod.chapter} • 교재 ${mod.pages}</span>
+                <button onclick="toggleChapterComplete('${mod.id}')" class="px-3.5 py-1.5 rounded-xl text-xs font-bold transition ${isDone ? 'bg-emerald-500/20 text-emerald-400 border border-emerald-500/40' : 'bg-hyundai-blue text-slate-950 hover:bg-sky-400'}">
+                  ${isDone ? '✓ 학습 완료됨 (클릭 시 해제)' : '✔ 현재 단원 학습 완료 표시'}
+                </button>
+              </div>
+              <h1 class="text-2xl sm:text-3xl font-extrabold text-white mt-3">${mod.title}</h1>
+              <p class="text-xs sm:text-sm text-slate-400 mt-1">${mod.subtitle}</p>
+            </div>
+
+            <!-- 1. 학습 목표 -->
+            <section class="bg-hyundai-panel border border-hyundai-border rounded-2xl p-6 space-y-3">
+              <h2 class="text-base font-bold text-hyundai-blue flex items-center gap-2"><span>1.</span> 학습 목표 (Learning Objectives)</h2>
+              <ul class="space-y-2 text-xs sm:text-sm text-slate-200">
+                ${mod.objectives.map(o => `<li class="flex items-start gap-2"><span class="text-hyundai-blue font-bold">•</span><span>${o}</span></li>`).join('')}
+              </ul>
+            </section>
+
+            <!-- 2. 선수 지식 및 사전 개념 -->
+            <section class="bg-hyundai-panel border border-hyundai-border rounded-2xl p-6 space-y-3">
+              <h2 class="text-base font-bold text-hyundai-blue flex items-center gap-2"><span>2.</span> 선수 지식 및 사전 개념 (Prerequisites)</h2>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                ${mod.prerequisites.map(p => `
+                  <div class="p-3.5 rounded-xl bg-hyundai-card border border-hyundai-border">
+                    <div class="text-xs font-bold text-sky-300">${p.term}</div>
+                    <div class="text-xs text-slate-300 mt-1 leading-relaxed">${p.desc}</div>
+                  </div>
+                `).join('')}
+              </div>
+            </section>
+
+            <!-- 3. 핵심 이론 설명 (기초 / 심화 / 실무 3단계 탭) -->
+            <section class="bg-hyundai-panel border border-hyundai-border rounded-2xl p-6 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <h2 class="text-base font-bold text-hyundai-blue flex items-center gap-2"><span>3.</span> 핵심 이론 설명 (3단계 수준별 학습)</h2>
+                <div class="inline-flex rounded-xl bg-hyundai-dark p-1 border border-hyundai-border" id="levelTabs">
+                  <button data-level="basic" class="level-tab px-3 py-1.5 rounded-lg text-xs font-bold bg-hyundai-blue text-slate-950">기초 (개념)</button>
+                  <button data-level="advanced" class="level-tab px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-300 hover:text-white">심화 (원리)</button>
+                  <button data-level="practical" class="level-tab px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-300 hover:text-white">실무 (적용·고장)</button>
+                </div>
+              </div>
+              <div id="levelContentBox" class="p-4 sm:p-5 rounded-xl bg-hyundai-card border border-hyundai-border text-xs sm:text-sm text-slate-200 leading-relaxed">
+                ${mod.levels.basic}
+              </div>
+            </section>
+
+            <!-- 4. 핵심 부품 및 시스템 구조도 -->
+            <section class="bg-hyundai-panel border border-hyundai-border rounded-2xl p-6 space-y-4">
+              <h2 class="text-base font-bold text-hyundai-blue flex items-center gap-2"><span>4.</span> 핵심 부품 및 시스템 구조도 (클릭하여 상세 역할 탐색)</h2>
+              <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                ${mod.components.map((comp, i) => `
+                  <div onclick="selectTheoryComponent(${i})" class="comp-card cursor-pointer p-4 rounded-xl bg-hyundai-card border border-hyundai-border hover:border-hyundai-blue transition">
+                    <div class="flex items-center justify-between">
+                      <span class="text-xs font-mono text-sky-400 font-bold">MODULE 0${i + 1}</span>
+                      <span class="text-[11px] text-slate-400">상세 확인</span>
+                    </div>
+                    <div class="text-sm font-bold text-white mt-1">${comp.name}</div>
+                    <p class="text-xs text-slate-300 mt-1.5 leading-relaxed">${comp.role}</p>
+                  </div>
+                `).join('')}
+              </div>
+            </section>
+
+            <!-- 5. 작동 원리 애니메이션 (단원별 맞춤 인터랙티브 SVG 다이어그램) -->
+            <section class="bg-hyundai-panel border border-hyundai-border rounded-2xl p-6 space-y-4">
+              <div class="flex items-center justify-between">
+                <h2 class="text-base font-bold text-hyundai-blue flex items-center gap-2"><span>5.</span> 작동 원리 애니메이션 및 구조 시각화</h2>
+                <span class="text-[11px] px-2.5 py-0.5 rounded bg-sky-950 text-sky-300 border border-sky-800">INTERACTIVE DIAGRAM</span>
+              </div>
+              ${renderChapterDiagram(mod.id)}
+            </section>
+
+            <!-- 6. 실제 자동차 적용 사례 -->
+            <section class="bg-hyundai-panel border border-hyundai-border rounded-2xl p-6 space-y-2">
+              <h2 class="text-base font-bold text-hyundai-blue flex items-center gap-2"><span>6.</span> 실제 자동차 적용 사례 (Real-World Application)</h2>
+              <div class="p-4 rounded-xl bg-gradient-to-r from-hyundai-navy/60 to-hyundai-card border border-sky-800/50 text-xs sm:text-sm text-slate-200 leading-relaxed">
+                🚘 ${mod.realCase}
+              </div>
+            </section>
+
+            <!-- 7. 인터랙티브 실습 연결 -->
+            <section class="bg-hyundai-panel border border-hyundai-border rounded-2xl p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div>
+                <h2 class="text-base font-bold text-hyundai-blue"><span>7.</span> 인터랙티브 실습 연계</h2>
+                <p class="text-xs text-slate-300 mt-1">방금 학습한 이론을 시뮬레이터에서 직접 수치를 조작하며 검증해 보세요.</p>
+              </div>
+              <button onclick="navigate('lab', '${getRecommendedLab(mod.id)}')" class="px-4 py-2.5 rounded-xl bg-hyundai-blue hover:bg-sky-400 text-slate-950 font-bold text-xs shrink-0 transition">
+                🔬 관련 실습실 바로 실행 →
+              </button>
+            </section>
+
+            <!-- 8. 핵심 내용 요약 -->
+            <section class="bg-hyundai-panel border border-hyundai-border rounded-2xl p-6 space-y-3">
+              <h2 class="text-base font-bold text-hyundai-blue flex items-center gap-2"><span>8.</span> 핵심 내용 요약 (Key Takeaways)</h2>
+              <div class="space-y-2">
+                ${mod.summary.map((s, idx) => `
+                  <div class="flex items-start gap-2.5 text-xs sm:text-sm text-slate-200">
+                    <span class="w-5 h-5 rounded-full bg-hyundai-blue/20 text-hyundai-blue font-mono text-xs font-bold flex items-center justify-center shrink-0 mt-0.5">${idx + 1}</span>
+                    <span>${s}</span>
+                  </div>
+                `).join('')}
+              </div>
+            </section>
+
+            <!-- 9. 이해도 확인 퀴즈 -->
+            <section class="bg-hyundai-panel border border-hyundai-border rounded-2xl p-6 space-y-4">
+              <h2 class="text-base font-bold text-hyundai-blue flex items-center gap-2"><span>9.</span> 이해도 확인 퀴즈 (단원 체크)</h2>
+              <div class="p-4 rounded-xl bg-hyundai-card border border-hyundai-border space-y-3">
+                <div class="text-sm font-bold text-white">Q. ${mod.quiz.q}</div>
+                <div class="space-y-2" id="chapterQuizOptions">
+                  ${mod.quiz.options.map((opt, oIdx) => `
+                    <button onclick="checkChapterQuiz('${mod.id}', ${oIdx})" class="ch-quiz-opt w-full text-left p-3 rounded-xl bg-hyundai-dark hover:bg-slate-800 border border-hyundai-border text-xs sm:text-sm text-slate-200 transition">
+                      ${oIdx + 1}. ${opt}
+                    </button>
+                  `).join('')}
+                </div>
+                <div id="chapterQuizFeedback" class="hidden p-3.5 rounded-xl text-xs sm:text-sm leading-relaxed"></div>
+              </div>
+            </section>
+
+            <!-- 10. 다음 학습으로 이동 -->
+            <section class="flex items-center justify-between gap-4 pt-2">
+              ${prevMod
+                ? `<button onclick="navigate('theory', '${prevMod.id}')" class="px-4 py-3 rounded-xl bg-hyundai-panel hover:bg-hyundai-card border border-hyundai-border text-xs sm:text-sm font-semibold text-slate-300 transition">← 이전: ${prevMod.title}</button>`
+                : '<div></div>'}
+              ${nextMod
+                ? `<button onclick="navigate('theory', '${nextMod.id}')" class="px-5 py-3 rounded-xl bg-hyundai-blue hover:bg-sky-400 text-slate-950 text-xs sm:text-sm font-bold transition shadow-lg">다음 학습: ${nextMod.title} →</button>`
+                : `<button onclick="navigate('quiz')" class="px-5 py-3 rounded-xl bg-emerald-500 hover:bg-emerald-400 text-slate-950 text-xs sm:text-sm font-bold transition shadow-lg">🎉 전 단원 완료! 최종 종합 평가로 이동 →</button>`}
+            </section>
+          </div>
+        </div>
+      `;
+    }
+
+    function getRecommendedLab(chId) {
+      if (chId === 'ch1' || chId === 'ch2_2' || chId === 'ch3_2' || chId === 'ch3_3') return 'labB';
+      if (chId === 'ch2_1') return 'labA';
+      if (chId === 'ch2_3') return 'labC';
+      if (chId === 'ch2_4' || chId === 'ch3_1') return 'labD';
+      if (chId === 'ch3_4' || chId === 'ch3_5') return 'labE';
+      return 'labA';
+    }
+
+    function renderChapterDiagram(chId) {
+      if (chId === 'ch1') {
+        return `
+          <div class="p-4 rounded-xl bg-hyundai-dark border border-hyundai-border space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <span class="text-xs font-semibold text-slate-300">구동 방식별 부품 수 & 구조 인터랙티브 비교 (교재 p.9~11)</span>
+              <div class="inline-flex rounded-lg bg-hyundai-panel p-1 border border-hyundai-border">
+                <button onclick="switchCh1Mode('ICE')" id="btnCh1ICE" class="px-3 py-1 rounded text-xs font-bold bg-hyundai-blue text-slate-950">내연기관 (ICE)</button>
+                <button onclick="switchCh1Mode('BEV')" id="btnCh1BEV" class="px-3 py-1 rounded text-xs font-semibold text-slate-300">순수전기차 (BEV)</button>
+              </div>
+            </div>
+            <div id="ch1DiagramBody" class="grid grid-cols-1 md:grid-cols-2 gap-4 items-center">
+              <svg viewBox="0 0 360 170" class="w-full h-44 bg-hyundai-panel rounded-xl border border-hyundai-border p-2">
+                <rect x="30" y="45" width="300" height="80" rx="22" fill="#131F36" stroke="#38BDF8" stroke-width="2"/>
+                <circle cx="95" cy="128" r="22" fill="#070D19" stroke="#94A3B8" stroke-width="4"/>
+                <circle cx="265" cy="128" r="22" fill="#070D19" stroke="#94A3B8" stroke-width="4"/>
+                <rect x="65" y="62" width="65" height="36" rx="6" fill="#F59E0B" fill-opacity="0.25" stroke="#F59E0B" stroke-width="1.5"/>
+                <text x="97" y="84" fill="#FCD34D" font-size="10" text-anchor="middle" font-weight="bold">엔진·변속기</text>
+                <line x1="130" y1="80" x2="270" y2="80" stroke="#00AAD2" stroke-width="2" class="animate-flow"/>
+                <text x="200" y="72" fill="#38BDF8" font-size="9" text-anchor="middle">와이어링 하네스 (3km / 45kg)</text>
+              </svg>
+              <div class="space-y-2 text-xs">
+                <div class="p-3 rounded-lg bg-hyundai-panel border border-hyundai-border">
+                  <div class="text-amber-400 font-bold">총 부품 수: 약 30,000개 (100% 기준)</div>
+                  <p class="text-slate-300 mt-1">엔진·변속기·연료계·배기계 등 약 10,000개의 정밀 기계 부품이 밀집되어 있으며 열효율은 약 20~30% 수준입니다.</p>
+                </div>
+                <div class="p-3 rounded-lg bg-hyundai-panel border border-hyundai-border">
+                  <div class="text-sky-400 font-bold">부품군 비중</div>
+                  <p class="text-slate-300 mt-1">파워트레인 33% • 섀시 25% • 차체/의장 22% • 전장/센서 20%</p>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+      if (chId === 'ch2_2' || chId === 'ch3_3') {
+        return `
+          <div class="p-4 rounded-xl bg-hyundai-dark border border-hyundai-border space-y-4">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <span class="text-xs font-semibold text-slate-300">E/E 아키텍처 세대별 구조 비교 (교재 p.37)</span>
+              <div class="inline-flex rounded-lg bg-hyundai-panel p-1 border border-hyundai-border">
+                <button onclick="switchArchDiagram('dist')" id="archBtn_dist" class="px-2.5 py-1 rounded text-xs font-bold bg-hyundai-blue text-slate-950">분산형 (70~100+ ECU)</button>
+                <button onclick="switchArchDiagram('dom')" id="archBtn_dom" class="px-2.5 py-1 rounded text-xs font-semibold text-slate-300">도메인형 (~50 ECU)</button>
+                <button onclick="switchArchDiagram('zonal')" id="archBtn_zonal" class="px-2.5 py-1 rounded text-xs font-semibold text-slate-300">존형 (&lt;10 HPC+Zone)</button>
+              </div>
+            </div>
+            <div id="archDiagramDisplay" class="p-4 rounded-xl bg-hyundai-panel border border-hyundai-border text-xs text-slate-200">
+              <div class="font-bold text-amber-400 mb-1">1세대: 분산형 ECU 아키텍처 (Distributed)</div>
+              <p>기능마다 개별 ECU가 1:1로 복잡하게 연결(70~100개 이상). CAN/LIN 위주 통신으로 와이어링 하네스 무게와 복잡도가 한계에 도달하며 전체 무선 OTA가 불가능합니다.</p>
+            </div>
+          </div>
+        `;
+      }
+      return `
+        <div class="p-4 rounded-xl bg-hyundai-dark border border-hyundai-border">
+          <svg viewBox="0 0 600 130" class="w-full h-32">
+            <rect x="20" y="30" width="140" height="70" rx="12" fill="#131F36" stroke="#38BDF8" stroke-width="2"/>
+            <text x="90" y="60" fill="#38BDF8" font-size="12" font-weight="bold" text-anchor="middle">1. 센서 (입력)</text>
+            <text x="90" y="80" fill="#CBD5E1" font-size="10" text-anchor="middle">환경·상태 데이터 수집</text>
+
+            <line x1="160" y1="65" x2="230" y2="65" stroke="#00AAD2" stroke-width="3" class="animate-flow"/>
+            <text x="195" y="55" fill="#00AAD2" font-size="9" text-anchor="middle">CAN/Ethernet</text>
+
+            <rect x="230" y="25" width="140" height="80" rx="12" fill="#002C5F" stroke="#00AAD2" stroke-width="2.5"/>
+            <text x="300" y="58" fill="#FFFFFF" font-size="12" font-weight="bold" text-anchor="middle">2. ECU / HPC (판단)</text>
+            <text x="300" y="78" fill="#7DD3FC" font-size="10" text-anchor="middle">알고리즘 연산·제어 지령</text>
+
+            <line x1="370" y1="65" x2="440" y2="65" stroke="#10B981" stroke-width="3" class="animate-flow"/>
+            <text x="405" y="55" fill="#10B981" font-size="9" text-anchor="middle">제어 신호</text>
+
+            <rect x="440" y="30" width="140" height="70" rx="12" fill="#131F36" stroke="#10B981" stroke-width="2"/>
+            <text x="510" y="60" fill="#34D399" font-size="12" font-weight="bold" text-anchor="middle">3. 액추에이터 (출력)</text>
+            <text x="510" y="80" fill="#CBD5E1" font-size="10" text-anchor="middle">모터·제동·조향 물리 구동</text>
+          </svg>
+        </div>
+      `;
+    }
+
+    function initTheoryInteractions() {
+      const mod = CURRICULUM.find(c => c.id === appState.activeChapterId) || CURRICULUM[0];
+      document.querySelectorAll('.level-tab').forEach(btn => {
+        btn.addEventListener('click', () => {
+          const lv = btn.dataset.level;
+          document.querySelectorAll('.level-tab').forEach(b => {
+            b.className = b === btn
+              ? 'level-tab px-3 py-1.5 rounded-lg text-xs font-bold bg-hyundai-blue text-slate-950'
+              : 'level-tab px-3 py-1.5 rounded-lg text-xs font-semibold text-slate-300 hover:text-white';
+          });
+          document.getElementById('levelContentBox').innerHTML = mod.levels[lv];
+        });
+      });
+    }
+
+    window.switchCh1Mode = function(mode) {
+      const btnIce = document.getElementById('btnCh1ICE');
+      const btnBev = document.getElementById('btnCh1BEV');
+      const body = document.getElementById('ch1DiagramBody');
+      if (!body) return;
+      if (mode === 'ICE') {
+        btnIce.className = 'px-3 py-1 rounded text-xs font-bold bg-hyundai-blue text-slate-950';
+        btnBev.className = 'px-3 py-1 rounded text-xs font-semibold text-slate-300';
+        body.innerHTML = `
+          <svg viewBox="0 0 360 170" class="w-full h-44 bg-hyundai-panel rounded-xl border border-hyundai-border p-2">
+            <rect x="30" y="45" width="300" height="80" rx="22" fill="#131F36" stroke="#38BDF8" stroke-width="2"/>
+            <circle cx="95" cy="128" r="22" fill="#070D19" stroke="#94A3B8" stroke-width="4"/>
+            <circle cx="265" cy="128" r="22" fill="#070D19" stroke="#94A3B8" stroke-width="4"/>
+            <rect x="65" y="62" width="65" height="36" rx="6" fill="#F59E0B" fill-opacity="0.25" stroke="#F59E0B" stroke-width="1.5"/>
+            <text x="97" y="84" fill="#FCD34D" font-size="10" text-anchor="middle" font-weight="bold">엔진·변속기</text>
+            <line x1="130" y1="80" x2="270" y2="80" stroke="#00AAD2" stroke-width="2" class="animate-flow"/>
+            <text x="200" y="72" fill="#38BDF8" font-size="9" text-anchor="middle">와이어링 하네스 (3km / 45kg)</text>
+          </svg>
+          <div class="space-y-2 text-xs">
+            <div class="p-3 rounded-lg bg-hyundai-panel border border-hyundai-border">
+              <div class="text-amber-400 font-bold">총 부품 수: 약 30,000개 (100% 기준)</div>
+              <p class="text-slate-300 mt-1">엔진·변속기·연료계·배기계 등 약 10,000개의 정밀 기계 부품이 밀집되어 있으며 열효율은 약 20~30% 수준입니다.</p>
+            </div>
+            <div class="p-3 rounded-lg bg-hyundai-panel border border-hyundai-border">
+              <div class="text-sky-400 font-bold">부품군 비중</div>
+              <p class="text-slate-300 mt-1">파워트레인 33% • 섀시 25% • 차체/의장 22% • 전장/센서 20%</p>
+            </div>
+          </div>`;
+      } else {
+        btnBev.className = 'px-3 py-1 rounded text-xs font-bold bg-hyundai-blue text-slate-950';
+        btnIce.className = 'px-3 py-1 rounded text-xs font-semibold text-slate-300';
+        body.innerHTML = `
+          <svg viewBox="0 0 360 170" class="w-full h-44 bg-hyundai-panel rounded-xl border border-hyundai-border p-2">
+            <rect x="30" y="45" width="300" height="80" rx="22" fill="#131F36" stroke="#10B981" stroke-width="2"/>
+            <circle cx="95" cy="128" r="22" fill="#070D19" stroke="#94A3B8" stroke-width="4"/>
+            <circle cx="265" cy="128" r="22" fill="#070D19" stroke="#94A3B8" stroke-width="4"/>
+            <rect x="115" y="96" width="130" height="18" rx="4" fill="#10B981" fill-opacity="0.3" stroke="#10B981" stroke-width="1.5"/>
+            <text x="180" y="108" fill="#6EE7B7" font-size="9" text-anchor="middle" font-weight="bold">하부 고전압 배터리 팩 (800V)</text>
+            <rect x="245" y="64" width="52" height="26" rx="5" fill="#00AAD2" fill-opacity="0.3" stroke="#00AAD2" stroke-width="1.5"/>
+            <text x="271" y="80" fill="#7DD3FC" font-size="9" text-anchor="middle" font-weight="bold">PE모듈</text>
+          </svg>
+          <div class="space-y-2 text-xs">
+            <div class="p-3 rounded-lg bg-hyundai-panel border border-hyundai-border">
+              <div class="text-emerald-400 font-bold">총 부품 수: 약 18,000개 (ICE 대비 60%, 약 30~40% 감소)</div>
+              <p class="text-slate-300 mt-1">기존 내연기관 부품 35%(엔진·연료·배기)가 소멸하고 배터리·모터·인버터 등 신규 부품 15%가 추가됩니다. 에너지 효율 85% 이상.</p>
+            </div>
+            <div class="p-3 rounded-lg bg-hyundai-panel border border-hyundai-border">
+              <div class="text-sky-400 font-bold">플랫폼 특징</div>
+              <p class="text-slate-300 mt-1">스케이트보드 하부 플랫 배터리 배치로 저중심 설계 및 실내 공간 극대화.</p>
+            </div>
+          </div>`;
+      }
+    };
+
+    window.switchArchDiagram = function(type) {
+      ['dist', 'dom', 'zonal'].forEach(t => {
+        const b = document.getElementById(`archBtn_${t}`);
+        if (b) b.className = t === type
+          ? 'px-2.5 py-1 rounded text-xs font-bold bg-hyundai-blue text-slate-950'
+          : 'px-2.5 py-1 rounded text-xs font-semibold text-slate-300';
+      });
+      const box = document.getElementById('archDiagramDisplay');
+      if (!box) return;
+      if (type === 'dist') {
+        box.innerHTML = `<div class="font-bold text-amber-400 mb-1">1세대: 분산형 ECU 아키텍처 (Distributed)</div><p>기능마다 개별 ECU가 1:1로 복잡하게 연결(70~100개 이상). CAN/LIN 위주 통신으로 와이어링 하네스 무게와 복잡도가 한계에 도달하며 전체 무선 OTA가 불가능합니다.</p>`;
+      } else if (type === 'dom') {
+        box.innerHTML = `<div class="font-bold text-sky-400 mb-1">2세대: 도메인 제어기 아키텍처 (Domain / DCU)</div><p>파워트레인·섀시, ADAS, 콕핏 등 기능 영역별로 통합(~50개 수준). 멀티코어 AP 및 AUTOSAR Adaptive 플랫폼 도입, CAN-FD 및 FlexRay 활용, 도메인별 제한적 OTA 지원.</p>`;
+      } else {
+        box.innerHTML = `<div class="font-bold text-emerald-400 mb-1">3세대: 존 아키텍처 (Zonal Architecture + 중앙 HPC)</div><p>차량의 물리적 구역(전/후/좌/우)을 기준으로 Zone Gateway가 인근 I/O를 통합하고 1Gbps+ 이더넷 백본으로 중앙 컴퓨터(HPC)에 연결(10개 미만). 배선 길이 500m 이상 단축, 하네스 중량 30% 이상 절감 및 전체 차량 상시 OTA 구현.</p>`;
+      }
+    };
+
+    window.selectTheoryComponent = function(idx) {
+      document.querySelectorAll('.comp-card').forEach((card, i) => {
+        card.classList.toggle('border-hyundai-blue', i === idx);
+        card.classList.toggle('bg-sky-950/30', i === idx);
+      });
+    };
+
+    window.toggleChapterComplete = function(chId) {
+      const exists = appState.completedChapters.includes(chId);
+      if (exists) {
+        appState.completedChapters = appState.completedChapters.filter(id => id !== chId);
+        showToast('학습 완료 표시가 해제되었습니다.', 'ℹ️');
+      } else {
+        appState.completedChapters.push(chId);
+        const mod = CURRICULUM.find(c => c.id === chId);
+        logActivity(`[이론 완료] ${mod.chapter} ${mod.title}`);
+        showToast('🎉 단원 학습 완료로 기록되었습니다!');
+      }
+      saveState();
+      renderCurrentRoute();
+    };
+
+    window.checkChapterQuiz = function(chId, selectedIdx) {
+      const mod = CURRICULUM.find(c => c.id === chId);
+      const isCorrect = selectedIdx === mod.quiz.answer;
+      const fb = document.getElementById('chapterQuizFeedback');
+      fb.classList.remove('hidden');
+
+      document.querySelectorAll('.ch-quiz-opt').forEach((btn, i) => {
+        btn.disabled = true;
+        if (i === mod.quiz.answer) {
+          btn.classList.add('border-emerald-500', 'bg-emerald-500/20', 'text-emerald-200', 'font-bold');
+        } else if (i === selectedIdx && !isCorrect) {
+          btn.classList.add('border-rose-500', 'bg-rose-500/20', 'text-rose-200');
+        }
+      });
+
+      if (isCorrect) {
+        fb.className = 'p-3.5 rounded-xl text-xs sm:text-sm leading-relaxed bg-emerald-500/15 border border-emerald-500/40 text-emerald-200';
+        fb.innerHTML = `<strong>✅ 정답입니다!</strong><br/>${mod.quiz.explanation}`;
+        appState.quizScores[chId] = 100;
+        if (!appState.completedChapters.includes(chId)) {
+          appState.completedChapters.push(chId);
+        }
+        logActivity(`[단원 퀴즈 정답] ${mod.chapter} 이해도 확인 통과`);
+      } else {
+        fb.className = 'p-3.5 rounded-xl text-xs sm:text-sm leading-relaxed bg-rose-500/15 border border-rose-500/40 text-rose-200';
+        fb.innerHTML = `<strong>❌ 오답입니다. (정답: ${mod.quiz.answer + 1}번)</strong><br/>${mod.quiz.explanation}`;
+        appState.quizScores[chId] = 50;
+        addWrongNote({
+          id: `ch_${chId}`,
+          chapter: mod.chapter,
+          q: mod.quiz.q,
+          userAns: mod.quiz.options[selectedIdx],
+          correctAns: mod.quiz.options[mod.quiz.answer],
+          explanation: mod.quiz.explanation
+        });
+        logActivity(`[오답 노트 저장] ${mod.chapter} 단원 퀴즈 복습 필요`);
+      }
+      saveState();
+    };
+
+    function addWrongNote(note) {
+      const idx = appState.wrongNotes.findIndex(n => n.id === note.id);
+      if (idx >= 0) appState.wrongNotes[idx] = note;
+      else appState.wrongNotes.push(note);
+    }
+
+    /*************************************************************************
+     * 7. VIEW 4: INTERACTIVE PRACTICE LABS (실습 A ~ F)
+     *************************************************************************/
+    function renderLab() {
+      const labs = [
+        { id: 'labA', label: '실습 A. 센서 작동' },
+        { id: 'labB', label: '실습 B. ECU 제어' },
+        { id: 'labC', label: '실습 C. CAN 통신' },
+        { id: 'labD', label: '실습 D. 전기차 배터리' },
+        { id: 'labE', label: '실습 E. 센서 퓨전' },
+        { id: 'labF', label: '실습 F. 전장 고장 진단' }
+      ];
+
+      return `
+        <div class="space-y-6">
+          <div class="bg-hyundai-panel border border-hyundai-border rounded-2xl p-6">
+            <h1 class="text-2xl font-extrabold text-white">🔬 자동차 전장 인터랙티브 실습실 (Lab A ~ F)</h1>
+            <p class="text-xs sm:text-sm text-slate-300 mt-1">입력 변수와 환경 조건을 직접 조작하면서 센서, ECU, CAN 버스, 배터리 BMS, 센서 퓨전 및 고장 진단을 실습합니다.</p>
+            <div class="mt-4 flex flex-wrap gap-2">
+              ${labs.map(l => `
+                <button onclick="navigate('lab', '${l.id}')" class="px-3.5 py-2 rounded-xl text-xs font-bold transition ${appState.activeLabId === l.id ? 'bg-hyundai-blue text-slate-950 shadow' : 'bg-hyundai-card text-slate-300 border border-hyundai-border hover:border-hyundai-blue'}">
+                  ${l.label}
+                </button>
+              `).join('')}
+            </div>
+          </div>
+
+          <div id="labWorkspace" class="bg-hyundai-panel border border-hyundai-border rounded-2xl p-6">
+            ${getLabContent(appState.activeLabId)}
+          </div>
+        </div>
+      `;
+    }
+
+    function getLabContent(labId) {
+      if (labId === 'labA') {
+        return `
+          <div class="space-y-5">
+            <div class="border-b border-hyundai-border pb-3">
+              <h2 class="text-lg font-bold text-white">실습 A. 4대 핵심 센서 작동 시뮬레이터 (교재 p.14~30)</h2>
+              <p class="text-xs text-slate-400">센서 종류, 장애물 거리(m), 기상/조도 환경을 변경해 각 센서의 물리적 탐지 한계와 출력 데이터를 확인하세요.</p>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div class="space-y-4 bg-hyundai-card p-4 rounded-xl border border-hyundai-border">
+                <div>
+                  <label class="block text-xs font-bold text-slate-300 mb-1.5">1. 센서 선택</label>
+                  <select id="labASensor" class="w-full p-2.5 rounded-lg bg-hyundai-dark border border-hyundai-border text-xs text-white">
+                    <option value="camera">카메라 (Camera - 가시광선, ~250m)</option>
+                    <option value="lidar">라이다 (LiDAR - 905/1550nm 레이저 ToF, ~200m)</option>
+                    <option value="radar" selected>레이더 (Radar - 77GHz 밀리미터파, ~300m)</option>
+                    <option value="ultrasonic">초음파 (Ultrasonic - 40kHz 음파, 0.1~5m)</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-300 mb-1.5">2. 전방 장애물 거리: <span id="labADistVal" class="text-hyundai-blue font-mono">80m</span></label>
+                  <input type="range" id="labADist" min="1" max="300" value="80" class="w-full accent-hyundai-blue"/>
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-300 mb-1.5">3. 주행 기상 및 조도 환경</label>
+                  <select id="labAWeather" class="w-full p-2.5 rounded-lg bg-hyundai-dark border border-hyundai-border text-xs text-white">
+                    <option value="clear">맑은 주간 (Clear Day)</option>
+                    <option value="night">야간 저조도 (Night / Dark)</option>
+                    <option value="rain">폭우 / 짙은 안개 (Heavy Rain & Fog)</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="lg:col-span-2 space-y-4">
+                <div class="bg-hyundai-dark rounded-xl border border-hyundai-border p-4">
+                  <svg id="labASvg" viewBox="0 0 500 180" class="w-full h-44"></svg>
+                </div>
+                <div id="labAResultBox" class="p-4 rounded-xl bg-hyundai-card border border-hyundai-border text-xs sm:text-sm space-y-1.5"></div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      if (labId === 'labB') {
+        return `
+          <div class="space-y-5">
+            <div class="border-b border-hyundai-border pb-3">
+              <h2 class="text-lg font-bold text-white">실습 B. 센서 → ECU → 액추에이터 폐루프 제어 시뮬레이터 (교재 p.12)</h2>
+              <p class="text-xs text-slate-400">차량 센서 입력값을 조절하면 ECU가 알고리즘 임계치를 판단하고 액추에이터를 구동하는 전 과정을 실시간으로 확인합니다.</p>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div class="space-y-4 bg-hyundai-card p-4 rounded-xl border border-hyundai-border">
+                <div>
+                  <label class="block text-xs font-bold text-slate-300 mb-1">전방 차간 거리 센서: <span id="labBGapVal" class="text-hyundai-blue font-mono">45m</span></label>
+                  <input type="range" id="labBGap" min="5" max="120" value="45" class="w-full accent-hyundai-blue"/>
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-300 mb-1">자차 주행 속도 (휠 스피드 센서): <span id="labBSpdVal" class="text-hyundai-blue font-mono">80 km/h</span></label>
+                  <input type="range" id="labBSpd" min="0" max="140" value="80" class="w-full accent-hyundai-blue"/>
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-300 mb-1">실내 CO2 / 유해가스 센서: <span id="labBCo2Val" class="text-hyundai-blue font-mono">650 ppm</span></label>
+                  <input type="range" id="labBCo2" min="400" max="2500" step="50" value="650" class="w-full accent-hyundai-blue"/>
+                </div>
+              </div>
+
+              <div class="lg:col-span-2 grid grid-cols-1 sm:grid-cols-3 gap-3 items-stretch" id="labBPipeline"></div>
+            </div>
+          </div>
+        `;
+      }
+
+      if (labId === 'labC') {
+        return `
+          <div class="space-y-5">
+            <div class="border-b border-hyundai-border pb-3">
+              <h2 class="text-lg font-bold text-white">실습 C. CAN 통신 버스 및 우선순위 중재 시뮬레이터 (교재 p.42, 46)</h2>
+              <p class="text-xs text-slate-400">CAN 통신은 메시지 ID 값이 낮을수록(예: 0x010) 높은 우선순위를 가집니다. 메시지를 전송하고 Bus-Off 오류 상황을 체험해 보세요.</p>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div class="space-y-3 bg-hyundai-card p-4 rounded-xl border border-hyundai-border">
+                <div>
+                  <label class="block text-xs font-bold text-slate-300 mb-1">송신 ECU (Transmitter)</label>
+                  <select id="canTxEcu" class="w-full p-2 rounded-lg bg-hyundai-dark border border-hyundai-border text-xs text-white">
+                    <option value="ESC_0x010">ESC 브레이크 제어기 (ID: 0x010 - 최우선)</option>
+                    <option value="EMS_0x120" selected>EMS 엔진/모터 제어기 (ID: 0x120 - 높음)</option>
+                    <option value="BCM_0x450">BCM 바디 제어 모듈 (ID: 0x450 - 보통)</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-300 mb-1">수신 ECU (Receiver)</label>
+                  <select id="canRxEcu" class="w-full p-2 rounded-lg bg-hyundai-dark border border-hyundai-border text-xs text-white">
+                    <option value="VCU (차량통합제어기)">VCU (차량통합제어기)</option>
+                    <option value="CLUSTER (디지털 클러스터)">CLUSTER (디지털 클러스터)</option>
+                    <option value="ADAS_HPC (자율주행 제어기)">ADAS_HPC (자율주행 제어기)</option>
+                  </select>
+                </div>
+                <div>
+                  <label class="block text-xs font-bold text-slate-300 mb-1">데이터 페이로드 (8 Bytes HEX)</label>
+                  <input id="canPayload" type="text" value="02 4A 00 FF 10 88 00 01" class="w-full p-2 rounded-lg bg-hyundai-dark border border-hyundai-border text-xs font-mono text-sky-300"/>
+                </div>
+                <div class="flex gap-2 pt-1">
+                  <button onclick="sendCanFrame(false)" class="flex-1 py-2 rounded-lg bg-hyundai-blue text-slate-950 font-bold text-xs hover:bg-sky-400">정상 프레임 전송</button>
+                  <button onclick="sendCanFrame(true)" class="flex-1 py-2 rounded-lg bg-rose-500/20 text-rose-300 border border-rose-500/40 font-bold text-xs hover:bg-rose-500/30">통신 오류(단락) 유발</button>
+                </div>
+              </div>
+
+              <div class="lg:col-span-2 space-y-3">
+                <div class="p-4 rounded-xl bg-hyundai-dark border border-hyundai-border">
+                  <div class="text-xs font-bold text-slate-400 mb-2">CAN 표준 데이터 프레임 구조 (ISO 11898-1)</div>
+                  <div id="canFrameVisual" class="grid grid-cols-5 gap-1.5 text-center font-mono text-xs">
+                    <div class="p-2 rounded bg-slate-800 border border-slate-700"><div class="text-[10px] text-slate-400">SOF</div><div class="text-white font-bold">0</div></div>
+                    <div class="p-2 rounded bg-hyundai-navy border border-hyundai-blue"><div class="text-[10px] text-sky-300">Arbitration ID</div><div id="frameIdBox" class="text-white font-bold">0x120</div></div>
+                    <div class="p-2 rounded bg-slate-800 border border-slate-700"><div class="text-[10px] text-slate-400">DLC</div><div class="text-white font-bold">8 Byte</div></div>
+                    <div class="p-2 rounded bg-emerald-950 border border-emerald-600"><div class="text-[10px] text-emerald-300">Data Field</div><div id="frameDataBox" class="text-white font-bold truncate">02 4A...</div></div>
+                    <div class="p-2 rounded bg-slate-800 border border-slate-700"><div class="text-[10px] text-slate-400">CRC / ACK</div><div class="text-emerald-400 font-bold">OK</div></div>
+                  </div>
+                </div>
+                <div id="canBusLog" class="p-4 rounded-xl bg-hyundai-card border border-hyundai-border h-44 overflow-y-auto font-mono text-xs space-y-1.5 text-slate-300">
+                  <div class="text-sky-400">[BUS READY] Dual-Wire CAN Bus (500 kbps / CAN-FD 5 Mbps) 대기 중...</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        `;
+      }
+
+      if (labId === 'labD') {
+        return `
+          <div class="space-y-5">
+            <div class="border-b border-hyundai-border pb-3">
+              <h2 class="text-lg font-bold text-white">실습 D. 전기차 배터리 팩 & BMS 상태 모니터링 시뮬레이터 (교재 p.55~59)</h2>
+              <p class="text-xs text-slate-400">주행(방전), 회생제동, 800V 초급속 충전을 전환하며 BMS가 SOC, SOH, 팩 전압/전류 및 셀 온도를 어떻게 제어하는지 관찰하세요.</p>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div class="space-y-3 bg-hyundai-card p-4 rounded-xl border border-hyundai-border">
+                <div class="text-xs font-bold text-slate-300">동작 모드 선택 (77.4 kWh / 800V 플랫폼)</div>
+                <div class="grid grid-cols-1 gap-2">
+                  <button onclick="setBatterySimMode('discharge')" class="bat-mode-btn p-2.5 rounded-lg bg-hyundai-blue text-slate-950 font-bold text-xs text-left">⚡ 고속 주행 (배터리 방전 → 모터 구동)</button>
+                  <button onclick="setBatterySimMode('regen')" class="bat-mode-btn p-2.5 rounded-lg bg-hyundai-dark text-slate-200 border border-hyundai-border font-semibold text-xs text-left">🔄 감속 회생제동 (운동에너지 → 배터리 충전)</button>
+                  <button onclick="setBatterySimMode('fastcharge')" class="bat-mode-btn p-2.5 rounded-lg bg-hyundai-dark text-slate-200 border border-hyundai-border font-semibold text-xs text-left">🔌 800V DC 초급속 충전 (18분 내 80% 목표)</button>
+                </div>
+                <div class="pt-2">
+                  <label class="block text-xs font-bold text-slate-300 mb-1">현재 배터리 SOC 설정: <span id="batSocLabel" class="text-hyundai-blue font-mono">65%</span></label>
+                  <input type="range" id="batSocSlider" min="5" max="100" value="65" class="w-full accent-hyundai-blue"/>
+                </div>
+              </div>
+
+              <div class="lg:col-span-2 space-y-4" id="batTelemetryDisplay"></div>
+            </div>
+          </div>
+        `;
+      }
+
+      if (labId === 'labE') {
+        return `
+          <div class="space-y-5">
+            <div class="border-b border-hyundai-border pb-3">
+              <h2 class="text-lg font-bold text-white">실습 E. 자율주행 다중 센서 퓨전(Sensor Fusion) 시뮬레이터 (교재 p.30, 118~120)</h2>
+              <p class="text-xs text-slate-400">카메라, LiDAR, Radar 센서를 개별 또는 조합으로 활성화하여 악천후·야간 상황에서 인식 신뢰도가 어떻게 향상되는지 확인하세요.</p>
+            </div>
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <div class="space-y-3 bg-hyundai-card p-4 rounded-xl border border-hyundai-border">
+                <div class="text-xs font-bold text-slate-300">센서 조합 선택</div>
+                <label class="flex items-center gap-2.5 p-2.5 rounded-lg bg-hyundai-dark border border-hyundai-border text-xs cursor-pointer">
+                  <input type="checkbox" id="fuseCam" checked class="accent-hyundai-blue w-4 h-4"/>
+                  <span><strong>카메라 (Camera)</strong> — 색상·표지판·차선</span>
+                </label>
+                <label class="flex items-center gap-2.5 p-2.5 rounded-lg bg-hyundai-dark border border-hyundai-border text-xs cursor-pointer">
+                  <input type="checkbox" id="fuseLidar" checked class="accent-hyundai-blue w-4 h-4"/>
+                  <span><strong>라이다 (LiDAR)</strong> — 3D 입체 거리·형상</span>
+                </label>
+                <label class="flex items-center gap-2.5 p-2.5 rounded-lg bg-hyundai-dark border border-hyundai-border text-xs cursor-pointer">
+                  <input type="checkbox" id="fuseRadar" checked class="accent-hyundai-blue w-4 h-4"/>
+                  <span><strong>레이더 (Radar)</strong> — 악천후 속도·장거리</span>
+                </label>
+                <div>
+                  <label class="block text-xs font-bold text-slate-300 mb-1">도로 시나리오</label>
+                  <select id="fuseScenario" class="w-full p-2.5 rounded-lg bg-hyundai-dark border border-hyundai-border text-xs text-white">
+                    <option value="day_sign">주간 고속도로 (차선 + 속도 표지판 + 전방 차량)</option>
+                    <option value="fog_cutin">짙은 안개·폭우 속 급차선 변경 차량 (Cut-in)</option>
+                    <option value="night_ped">가로등 없는 야간 횡단보도 보행자 출현</option>
+                  </select>
+                </div>
+              </div>
+              <div class="lg:col-span-2 space-y-3" id="fusionOutputPanel"></div>
+            </div>
+          </div>
+        `;
+      }
+
+      // labF: 자동차 전장 고장 진단
+      return `
+        <div class="space-y-5">
+          <div class="border-b border-hyundai-border pb-3">
+            <h2 class="text-lg font-bold text-white">실습 F. 자동차 전장 시스템 고장 진단 시뮬레이터</h2>
+            <p class="text-xs text-slate-400">실제 차량 정비 및 R&D 검증 현장에서 발생하는 전장 이상 증상과 텔레메트리 수치를 분석해 정확한 원인과 조치 방법을 선택하세요.</p>
+          </div>
+          <div class="flex flex-wrap gap-2">
+            ${DIAGNOSTIC_CASES.map((c, i) => `
+              <button onclick="selectDiagCase(${i})" class="diag-tab px-3 py-1.5 rounded-lg text-xs font-bold ${i === 0 ? 'bg-hyundai-blue text-slate-950' : 'bg-hyundai-card text-slate-300 border border-hyundai-border'}">
+                고장 사례 0${i + 1}
+              </button>
+            `).join('')}
+          </div>
+          <div id="diagCaseBox"></div>
+        </div>
+      `;
+    }
+
+    function initLabInteractions() {
+      const lab = appState.activeLabId;
+      if (lab === 'labA') {
+        const updateA = () => {
+          const sensor = document.getElementById('labASensor').value;
+          const dist = parseInt(document.getElementById('labADist').value, 10);
+          const weather = document.getElementById('labAWeather').value;
+          document.getElementById('labADistVal').textContent = `${dist}m`;
+
+          const specs = {
+            camera: { name: '카메라 (Camera)', max: 250, color: '#38BDF8', rainFactor: 0.35, nightFactor: 0.45, info: '색상·차선·신호등·표지판 인식 최상, 3D 거리는 추정 방식' },
+            lidar: { name: '라이다 (LiDAR)', max: 200, color: '#10B981', rainFactor: 0.55, nightFactor: 1.0, info: '905/1550nm 레이저 ToF로 정밀 3D 점군 생성, 색상/글씨 인식 불가' },
+            radar: { name: '레이더 (Radar)', max: 300, color: '#F59E0B', rainFactor: 0.95, nightFactor: 1.0, info: '77GHz 밀리미터파 FMCW & 도플러 효과로 속도·거리 직접 측정, 악천후 최강' },
+            ultrasonic: { name: '초음파 (Ultrasonic)', max: 5, color: '#A855F7', rainFactor: 0.85, nightFactor: 1.0, info: '40kHz 압전 소자 에코 측정, 0.1~5m 초근거리 주차 보조 특화' }
+          }[sensor];
+
+          let effectiveRange = specs.max;
+          if (weather === 'rain') effectiveRange = Math.round(specs.max * specs.rainFactor);
+          if (weather === 'night') effectiveRange = Math.round(specs.max * specs.nightFactor);
+
+          const detected = dist <= effectiveRange;
+          const confidence = detected ? Math.max(40, Math.round(100 - (dist / effectiveRange) * 45)) : 0;
+
+          const svg = document.getElementById('labASvg');
+          const carX = 60;
+          const obsX = Math.min(450, carX + 40 + (dist / 300) * 340);
+          const beamW = Math.min(380, (effectiveRange / 300) * 340);
+
+          svg.innerHTML = `
+            <rect x="0" y="0" width="500" height="180" fill="#070D19"/>
+            <line x1="20" y1="135" x2="480" y2="135" stroke="#1E3154" stroke-width="2" stroke-dasharray="8 6"/>
+            <polygon points="${carX + 35},90 ${carX + 35 + beamW},40 ${carX + 35 + beamW},140" fill="${specs.color}" fill-opacity="0.18" stroke="${specs.color}" stroke-dasharray="4 4"/>
+            <rect x="${carX - 25}" y="75" width="60" height="30" rx="8" fill="#002C5F" stroke="#00AAD2" stroke-width="2"/>
+            <text x="${carX + 5}" y="94" fill="#fff" font-size="9" text-anchor="middle" font-weight="bold">자차</text>
+            <rect x="${obsX}" y="72" width="26" height="34" rx="5" fill="${detected ? '#F43F5E' : '#475569'}" stroke="#fff" stroke-width="1"/>
+            <text x="${obsX + 13}" y="64" fill="${detected ? '#FDA4AF' : '#94A3B8'}" font-size="10" text-anchor="middle" font-weight="bold">${dist}m 장애물</text>
+            <text x="250" y="22" fill="#94A3B8" font-size="11" text-anchor="middle">유효 탐지 사거리: ${effectiveRange}m (최대 ${specs.max}m)</text>
+          `;
+
+          document.getElementById('labAResultBox').innerHTML = `
+            <div class="flex items-center justify-between">
+              <span class="font-bold text-white">${specs.name} 분석 결과</span>
+              <span class="px-2.5 py-0.5 rounded-full text-xs font-bold ${detected ? 'bg-emerald-500/20 text-emerald-400' : 'bg-rose-500/20 text-rose-400'}">
+                ${detected ? `객체 탐지 성공 (신뢰도 ${confidence}%)` : '탐지 범위 초과 / 신호 감쇄로 미인식'}
+              </span>
+            </div>
+            <p class="text-slate-300 text-xs">${specs.info}</p>
+          `;
+        };
+        ['labASensor', 'labADist', 'labAWeather'].forEach(id => document.getElementById(id).addEventListener('input', updateA));
+        updateA();
+      } else if (lab === 'labB') {
+        const updateB = () => {
+          const gap = parseInt(document.getElementById('labBGap').value, 10);
+          const spd = parseInt(document.getElementById('labBSpd').value, 10);
+          const co2 = parseInt(document.getElementById('labBCo2').value, 10);
+          document.getElementById('labBGapVal').textContent = `${gap}m`;
+          document.getElementById('labBSpdVal').textContent = `${spd} km/h`;
+          document.getElementById('labBCo2Val').textContent = `${co2} ppm`;
+
+          const ttc = spd > 0 ? (gap / (spd / 3.6)).toFixed(1) : '∞';
+          const isBrake = spd > 10 && gap < 25;
+          const isPurify = co2 >= 1200;
+
+          document.getElementById('labBPipeline').innerHTML = `
+            <div class="p-4 rounded-xl bg-hyundai-dark border border-sky-500/40 space-y-2">
+              <div class="text-xs font-bold text-sky-400">1단계: 센서 입력 (Sensors)</div>
+              <div class="text-xs text-slate-300 space-y-1 font-mono">
+                <div>• Radar/LiDAR 거리: ${gap}m</div>
+                <div>• 휠 스피드 센서: ${spd}km/h</div>
+                <div>• 실내 CO2 센서: ${co2}ppm</div>
+              </div>
+            </div>
+            <div class="p-4 rounded-xl bg-hyundai-navy/60 border border-hyundai-blue space-y-2">
+              <div class="text-xs font-bold text-white">2단계: ECU 판단 (ADAS & BCM)</div>
+              <div class="text-xs text-sky-200 space-y-1">
+                <div>• 충돌 예상 시간(TTC): <strong>${ttc}초</strong></div>
+                <div>• 주행 판단: <span class="${isBrake ? 'text-rose-400 font-bold' : 'text-emerald-400'}">${isBrake ? '긴급 제동(AEB) 조건 충족' : '정상 순항 유지'}</span></div>
+                <div>• 공조 판단: <span class="${isPurify ? 'text-amber-400 font-bold' : 'text-emerald-400'}">${isPurify ? 'CO2 임계치 초과 → 내기순환' : '실내 공기질 양호'}</span></div>
+              </div>
+            </div>
+            <div class="p-4 rounded-xl bg-hyundai-dark border border-emerald-500/40 space-y-2">
+              <div class="text-xs font-bold text-emerald-400">3단계: 액추에이터 출력 (Actuators)</div>
+              <div class="text-xs text-slate-200 space-y-1.5">
+                <div class="p-2 rounded ${isBrake ? 'bg-rose-500/20 text-rose-300 font-bold' : 'bg-slate-800 text-slate-400'}">
+                  🛑 Brake-by-Wire 캘리퍼: ${isBrake ? '최대 제동력 인가 작동!' : '대기 상태'}
+                </div>
+                <div class="p-2 rounded ${isPurify ? 'bg-amber-500/20 text-amber-300 font-bold' : 'bg-slate-800 text-slate-400'}">
+                  🌬️ HVAC 블로워·플랩: ${isPurify ? '공기청정 모드 풀가동!' : '표준 환기 유지'}
+                </div>
+              </div>
+            </div>
+          `;
+        };
+        ['labBGap', 'labBSpd', 'labBCo2'].forEach(id => document.getElementById(id).addEventListener('input', updateB));
+        updateB();
+      } else if (lab === 'labD') {
+        window._batMode = 'discharge';
+        window.setBatterySimMode = (m) => {
+          window._batMode = m;
+          document.querySelectorAll('.bat-mode-btn').forEach((b, idx) => {
+            const keys = ['discharge', 'regen', 'fastcharge'];
+            b.className = keys[idx] === m
+              ? 'bat-mode-btn p-2.5 rounded-lg bg-hyundai-blue text-slate-950 font-bold text-xs text-left'
+              : 'bat-mode-btn p-2.5 rounded-lg bg-hyundai-dark text-slate-200 border border-hyundai-border font-semibold text-xs text-left';
+          });
+          updateD();
+        };
+        const updateD = () => {
+          const soc = parseInt(document.getElementById('batSocSlider').value, 10);
+          document.getElementById('batSocLabel').textContent = `${soc}%`;
+          const mode = window._batMode || 'discharge';
+          const voltage = (710 + (soc / 100) * 110).toFixed(1);
+          let current = '-145.0 A (방전)';
+          let temp = '31.5 °C (정상)';
+          let bmsAction = '셀 밸런싱 정상 수행 중 • 수냉식 쿨링 펌프 저속 순환';
+          let flowColor = 'text-amber-400';
+
+          if (mode === 'regen') {
+            current = '+82.5 A (회생 충전)';
+            temp = '32.0 °C (정상)';
+            bmsAction = '구동모터 발전 전류 수전 중 • SOC 95% 이상 시 회생제동량 자동 제한';
+            flowColor = 'text-emerald-400';
+          } else if (mode === 'fastcharge') {
+            current = '+310.0 A (800V 초급속 충전)';
+            temp = '39.8 °C (수냉 최대 가동)';
+            bmsAction = 'BMS 고출력 충전 제어 중 • 수냉식 쿨링 패브릭 최대 유량 가동 (열폭주 예방)';
+            flowColor = 'text-hyundai-blue';
+          }
+
+          document.getElementById('batTelemetryDisplay').innerHTML = `
+            <div class="grid grid-cols-2 sm:grid-cols-4 gap-3">
+              <div class="p-3.5 rounded-xl bg-hyundai-dark border border-hyundai-border">
+                <div class="text-[11px] text-slate-400">잔여 충전량 (SOC)</div>
+                <div class="text-xl font-extrabold text-white font-mono mt-0.5">${soc}%</div>
+              </div>
+              <div class="p-3.5 rounded-xl bg-hyundai-dark border border-hyundai-border">
+                <div class="text-[11px] text-slate-400">배터리 수명 (SOH)</div>
+                <div class="text-xl font-extrabold text-emerald-400 font-mono mt-0.5">98.4%</div>
+              </div>
+              <div class="p-3.5 rounded-xl bg-hyundai-dark border border-hyundai-border">
+                <div class="text-[11px] text-slate-400">시스템 전압 (800V급)</div>
+                <div class="text-xl font-extrabold text-sky-300 font-mono mt-0.5">${voltage} V</div>
+              </div>
+              <div class="p-3.5 rounded-xl bg-hyundai-dark border border-hyundai-border">
+                <div class="text-[11px] text-slate-400">팩 전류 / 셀 온도</div>
+                <div class="text-sm font-extrabold ${flowColor} font-mono mt-1">${current}</div>
+                <div class="text-[11px] text-slate-400 mt-0.5">${temp}</div>
+              </div>
+            </div>
+            <div class="p-4 rounded-xl bg-hyundai-card border border-hyundai-blue/40 text-xs sm:text-sm space-y-1">
+              <div class="font-bold text-hyundai-blue">🧠 BMS (Battery Management System) 실시간 제어 상태</div>
+              <p class="text-slate-200">${bmsAction}</p>
+              <p class="text-[11px] text-slate-400">예상 주행 가능 거리: 약 ${Math.round(soc * 5.2)} km (77.4 kWh 기준)</p>
+            </div>
+          `;
+        };
+        document.getElementById('batSocSlider').addEventListener('input', updateD);
+        updateD();
+      } else if (lab === 'labE') {
+        const updateE = () => {
+          const cam = document.getElementById('fuseCam').checked;
+          const lid = document.getElementById('fuseLidar').checked;
+          const rad = document.getElementById('fuseRadar').checked;
+          const scen = document.getElementById('fuseScenario').value;
+
+          let camScore = cam ? (scen === 'day_sign' ? 98 : scen === 'fog_cutin' ? 30 : 40) : 0;
+          let lidScore = lid ? (scen === 'fog_cutin' ? 50 : 95) : 0;
+          let radScore = rad ? (scen === 'day_sign' ? 75 : 96) : 0;
+
+          const activeCount = [cam, lid, rad].filter(Boolean).length;
+          const fusedScore = activeCount === 0 ? 0 : Math.min(99, Math.round(Math.max(camScore, lidScore, radScore) + (activeCount - 1) * 4));
+
+          document.getElementById('fusionOutputPanel').innerHTML = `
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 text-xs">
+              <div class="p-3.5 rounded-xl bg-hyundai-dark border border-hyundai-border">
+                <div class="text-slate-400">카메라 인식률</div>
+                <div class="text-lg font-bold text-sky-400 font-mono mt-1">${cam ? camScore + '%' : 'OFF'}</div>
+                <div class="text-[11px] text-slate-400 mt-1">${scen === 'day_sign' ? '표지판·차선 완벽 식별' : '악천후/저조도 시야 저하'}</div>
+              </div>
+              <div class="p-3.5 rounded-xl bg-hyundai-dark border border-hyundai-border">
+                <div class="text-slate-400">라이다 3D 인식률</div>
+                <div class="text-lg font-bold text-emerald-400 font-mono mt-1">${lid ? lidScore + '%' : 'OFF'}</div>
+                <div class="text-[11px] text-slate-400 mt-1">${scen === 'fog_cutin' ? '안개 입자 일부 산란' : '고정밀 3D 입체 윤곽 포착'}</div>
+              </div>
+              <div class="p-3.5 rounded-xl bg-hyundai-dark border border-hyundai-border">
+                <div class="text-slate-400">레이더 전파 인식률</div>
+                <div class="text-lg font-bold text-amber-400 font-mono mt-1">${rad ? radScore + '%' : 'OFF'}</div>
+                <div class="text-[11px] text-slate-400 mt-1">기상 무관 상대속도·거리 확보</div>
+              </div>
+            </div>
+            <div class="p-4 rounded-xl bg-hyundai-navy/60 border border-hyundai-blue space-y-2">
+              <div class="flex items-center justify-between">
+                <span class="text-sm font-bold text-white">통합 센서 퓨전(Sensor Fusion) 최종 인지 신뢰도</span>
+                <span class="text-xl font-extrabold font-mono ${fusedScore >= 90 ? 'text-emerald-400' : 'text-amber-400'}">${fusedScore}%</span>
+              </div>
+              <p class="text-xs text-slate-200 leading-relaxed">
+                ${activeCount === 3
+                  ? '✅ 3중 이종 센서 퓨전 활성: 카메라의 의미론적(Semantic) 정보 + 라이다의 3D 공간 정밀도 + 레이더의 악천후 속도 신뢰성이 결합되어 Level 3+ 수준의 이중 안전망(Redundancy)을 달성했습니다.'
+                  : activeCount === 0
+                  ? '⚠️ 활성화된 센서가 없습니다. 최소 1개 이상의 센서를 선택하세요.'
+                  : 'ℹ️ 일부 센서만 활성화되어 단일 센서의 물리적 약점(악천후, 색상 미인식 등)이 존재합니다. 복수 센서를 결합해 보세요.'}
+              </p>
+            </div>
+          `;
+        };
+        ['fuseCam', 'fuseLidar', 'fuseRadar', 'fuseScenario'].forEach(id => document.getElementById(id).addEventListener('change', updateE));
+        updateE();
+      } else if (lab === 'labF') {
+        selectDiagCase(0);
+      }
+    }
+
+    window.sendCanFrame = function(isError) {
+      const tx = document.getElementById('canTxEcu').value;
+      const rx = document.getElementById('canRxEcu').value;
+      const payload = document.getElementById('canPayload').value || '00 00 00 00';
+      const idStr = tx.split('_')[1];
+      document.getElementById('frameIdBox').textContent = idStr;
+      document.getElementById('frameDataBox').textContent = payload;
+
+      const log = document.getElementById('canBusLog');
+      if (isError) {
+        log.innerHTML = `<div class="text-rose-400 font-bold">[ERROR - BUS OFF] CAN-High / CAN-Low 차동 전압 불균형 감지! 송신 에러 카운터(TEC > 255) 초과로 ${tx} 통신 격리됨.</div>` + log.innerHTML;
+        showToast('CAN Bus-Off 통신 오류가 시뮬레이션되었습니다.', '⚠️');
+      } else {
+        log.innerHTML = `<div class="text-emerald-400">[TX→RX OK] ${tx} ➔ ${rx} | ID:${idStr} (우선순위 중재 승리) | DATA:[${payload}] | ACK 수신 완료</div>` + log.innerHTML;
+      }
+    };
+
+    window.selectDiagCase = function(idx) {
+      document.querySelectorAll('.diag-tab').forEach((b, i) => {
+        b.className = i === idx
+          ? 'diag-tab px-3 py-1.5 rounded-lg text-xs font-bold bg-hyundai-blue text-slate-950'
+          : 'diag-tab px-3 py-1.5 rounded-lg text-xs font-bold bg-hyundai-card text-slate-300 border border-hyundai-border';
+      });
+      const c = DIAGNOSTIC_CASES[idx];
+      document.getElementById('diagCaseBox').innerHTML = `
+        <div class="p-5 rounded-xl bg-hyundai-card border border-hyundai-border space-y-4">
+          <div>
+            <h3 class="text-base font-bold text-amber-400">${c.title}</h3>
+            <p class="text-xs sm:text-sm text-slate-200 mt-1.5 leading-relaxed">${c.symptom}</p>
+          </div>
+          <div class="grid grid-cols-2 sm:grid-cols-4 gap-2.5 text-xs font-mono">
+            <div class="p-2.5 rounded-lg bg-hyundai-dark border border-hyundai-border"><span class="text-slate-400 block text-[10px]">CAMERA</span>${c.telemetry.camera}</div>
+            <div class="p-2.5 rounded-lg bg-hyundai-dark border border-hyundai-border"><span class="text-slate-400 block text-[10px]">RADAR</span>${c.telemetry.radar}</div>
+            <div class="p-2.5 rounded-lg bg-hyundai-dark border border-hyundai-border"><span class="text-slate-400 block text-[10px]">CAN BUS</span>${c.telemetry.canBus}</div>
+            <div class="p-2.5 rounded-lg bg-hyundai-dark border border-hyundai-border"><span class="text-slate-400 block text-[10px]">BATTERY/PWR</span>${c.telemetry.battery}</div>
+          </div>
+          <div class="space-y-2">
+            <div class="text-xs font-bold text-sky-300">엔지니어링 원인 추론 및 해결 방법 선택:</div>
+            ${c.options.map((opt, oIdx) => `
+              <button onclick="checkDiagAnswer(${idx}, ${oIdx})" class="diag-opt w-full text-left p-3 rounded-xl bg-hyundai-dark hover:bg-slate-800 border border-hyundai-border text-xs sm:text-sm text-slate-200 transition">
+                ${oIdx + 1}. ${opt}
+              </button>
+            `).join('')}
+          </div>
+          <div id="diagFeedback" class="hidden p-3.5 rounded-xl text-xs sm:text-sm leading-relaxed"></div>
+        </div>
+      `;
+    };
+
+    window.checkDiagAnswer = function(caseIdx, optIdx) {
+      const c = DIAGNOSTIC_CASES[caseIdx];
+      const ok = optIdx === c.answer;
+      const fb = document.getElementById('diagFeedback');
+      fb.classList.remove('hidden');
+      document.querySelectorAll('.diag-opt').forEach((b, i) => {
+        b.disabled = true;
+        if (i === c.answer) b.classList.add('border-emerald-500', 'bg-emerald-500/20', 'text-emerald-200', 'font-bold');
+        else if (i === optIdx && !ok) b.classList.add('border-rose-500', 'bg-rose-500/20', 'text-rose-200');
+      });
+      fb.className = ok
+        ? 'p-3.5 rounded-xl text-xs sm:text-sm leading-relaxed bg-emerald-500/15 border border-emerald-500/40 text-emerald-200'
+        : 'p-3.5 rounded-xl text-xs sm:text-sm leading-relaxed bg-rose-500/15 border border-rose-500/40 text-rose-200';
+      fb.innerHTML = `${ok ? '<strong>✅ 정확한 고장 진단입니다!</strong>' : `<strong>❌ 오답입니다. (정답: ${c.answer + 1}번)</strong>`}<br/>${c.reason}`;
+      if (ok) logActivity(`[고장 진단 완료] ${c.title}`);
+    };
+
+    /*************************************************************************
+     * 8. VIEW 5: INTEGRATED VEHICLE SYSTEM SIMULATOR (차량 도메인 통합 시뮬레이터)
+     *************************************************************************/
+    function renderSimulator() {
+      return `
+        <div class="space-y-6">
+          <div class="bg-hyundai-panel border border-hyundai-border rounded-2xl p-6">
+            <h1 class="text-2xl font-extrabold text-white">🚘 자동차 5대 도메인 통합 시스템 시뮬레이터</h1>
+            <p class="text-xs sm:text-sm text-slate-300 mt-1">
+              차량 부품(센서·배터리·인버터·Zonal 제어기·VMC·디지털 콕핏)을 클릭하여 역할을 확인하고, 주행 조건을 조작해 5대 도메인 간 실시간 데이터 흐름을 체험하세요.
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6">
+            <!-- Interactive Vehicle Schematic -->
+            <div class="lg:col-span-8 bg-hyundai-panel border border-hyundai-border rounded-2xl p-5 space-y-4">
+              <div class="flex flex-wrap items-center justify-between gap-2">
+                <span class="text-xs font-bold text-sky-300">SDV ZONAL & 5-DOMAIN VEHICLE SCHEMATIC (부품을 클릭하세요)</span>
+                <span id="simModeBadge" class="px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-bold">EV 순항 모드</span>
+              </div>
+
+              <div class="bg-hyundai-dark rounded-2xl border border-hyundai-border p-3">
+                <svg viewBox="0 0 640 290" class="w-full h-auto">
+                  <!-- Vehicle Top-Down Chassis Outline -->
+                  <rect x="90" y="45" width="460" height="200" rx="55" fill="#0E1729" stroke="#38BDF8" stroke-width="2"/>
+                  <!-- Wheels -->
+                  <rect x="145" y="30" width="65" height="16" rx="5" fill="#1E293B" stroke="#94A3B8"/>
+                  <rect x="430" y="30" width="65" height="16" rx="5" fill="#1E293B" stroke="#94A3B8"/>
+                  <rect x="145" y="244" width="65" height="16" rx="5" fill="#1E293B" stroke="#94A3B8"/>
+                  <rect x="430" y="244" width="65" height="16" rx="5" fill="#1E293B" stroke="#94A3B8"/>
+
+                  <!-- High-Speed Ethernet Backbone -->
+                  <line x1="160" y1="145" x2="480" y2="145" stroke="#00AAD2" stroke-width="4" class="animate-flow"/>
+                  <line x1="320" y1="75" x2="320" y2="215" stroke="#00AAD2" stroke-width="3" class="animate-flow"/>
+
+                  <!-- Clickable Subsystem Nodes -->
+                  <g onclick="inspectVehiclePart('adas')" class="cursor-pointer">
+                    <rect x="45" y="112" width="90" height="66" rx="12" fill="#002C5F" stroke="#38BDF8" stroke-width="2"/>
+                    <text x="90" y="140" fill="#fff" font-size="11" font-weight="bold" text-anchor="middle">전방 센서군</text>
+                    <text x="90" y="156" fill="#7DD3FC" font-size="9" text-anchor="middle">LiDAR·Radar·Cam</text>
+                  </g>
+
+                  <g onclick="inspectVehiclePart('hpc')" class="cursor-pointer">
+                    <rect x="255" y="110" width="130" height="70" rx="14" fill="#00AAD2" fill-opacity="0.22" stroke="#00AAD2" stroke-width="2.5"/>
+                    <text x="320" y="140" fill="#fff" font-size="12" font-weight="bold" text-anchor="middle">중앙 HPC 컴퓨터</text>
+                    <text x="320" y="158" fill="#38BDF8" font-size="9" text-anchor="middle">자율주행·SDV·Cockpit</text>
+                  </g>
+
+                  <g onclick="inspectVehiclePart('battery')" class="cursor-pointer">
+                    <rect x="235" y="58" width="170" height="34" rx="8" fill="#10B981" fill-opacity="0.2" stroke="#10B981" stroke-width="1.8"/>
+                    <text x="320" y="79" fill="#6EE7B7" font-size="10" font-weight="bold" text-anchor="middle">800V 배터리 팩 & BMS (하부)</text>
+                  </g>
+
+                  <g onclick="inspectVehiclePart('pe')" class="cursor-pointer">
+                    <rect x="455" y="112" width="105" height="66" rx="12" fill="#131F36" stroke="#F59E0B" stroke-width="2"/>
+                    <text x="507" y="140" fill="#FCD34D" font-size="11" font-weight="bold" text-anchor="middle">PE 파워트레인</text>
+                    <text x="507" y="156" fill="#FDE68A" font-size="9" text-anchor="middle">모터·SiC인버터·감속기</text>
+                  </g>
+
+                  <g onclick="inspectVehiclePart('chassis')" class="cursor-pointer">
+                    <rect x="235" y="198" width="170" height="34" rx="8" fill="#A855F7" fill-opacity="0.2" stroke="#A855F7" stroke-width="1.8"/>
+                    <text x="320" y="219" fill="#E9D5FF" font-size="10" font-weight="bold" text-anchor="middle">섀시 VMC & X-by-Wire</text>
+                  </g>
+                </svg>
+              </div>
+
+              <!-- Controls -->
+              <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                <button onclick="setSimDrivingState('accel')" class="p-3 rounded-xl bg-hyundai-card hover:border-hyundai-blue border border-hyundai-border text-xs font-bold text-white">🚀 급가속 (PE 최대 토크)</button>
+                <button onclick="setSimDrivingState('regen')" class="p-3 rounded-xl bg-hyundai-card hover:border-emerald-400 border border-hyundai-border text-xs font-bold text-emerald-300">🔋 감속 회생제동 (에너지 회수)</button>
+                <button onclick="setSimDrivingState('aeb')" class="p-3 rounded-xl bg-hyundai-card hover:border-rose-400 border border-hyundai-border text-xs font-bold text-rose-300">🛑 전방 위험 AEB 긴급제동</button>
+              </div>
+            </div>
+
+            <!-- Part Inspector & Live Telemetry -->
+            <div class="lg:col-span-4 space-y-4">
+              <div id="simPartInspector" class="bg-hyundai-panel border border-hyundai-border rounded-2xl p-5 space-y-2.5">
+                <div class="text-xs font-bold text-hyundai-blue">부품 상세 인스펙터</div>
+                <h3 class="text-base font-bold text-white">중앙 고성능 차량 컴퓨터 (HPC)</h3>
+                <p class="text-xs text-slate-300 leading-relaxed">
+                  존(Zonal) 게이트웨이로부터 1Gbps+ Automotive Ethernet 백본을 통해 센서·바디 데이터를 수집하여 자율주행 E2E AI 연산, 통합 운동 제어(VMC), 디지털 콕핏 화면을 동시에 처리하는 SDV의 핵심 두뇌입니다.
+                </p>
+              </div>
+
+              <div class="bg-hyundai-panel border border-hyundai-border rounded-2xl p-5 space-y-3">
+                <div class="text-xs font-bold text-slate-400">실시간 시스템 텔레메트리</div>
+                <div id="simLiveStats" class="space-y-2 text-xs font-mono"></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    function initSimulatorInteractions() {
+      setSimDrivingState('accel');
+    }
+
+    window.inspectVehiclePart = function(part) {
+      const infoMap = {
+        adas: { title: '자율주행 센서 시스템 (카메라·LiDAR·Radar)', desc: '가시광선 카메라(표지판/차선), 905/1550nm 라이다(3D 점군), 77GHz 레이더(악천후 속도/거리)가 수집한 환경 데이터를 센서 퓨전으로 통합해 HPC에 전달합니다.' },
+        hpc: { title: '중앙 고성능 차량 컴퓨터 (HPC / HPVC)', desc: 'Zonal 아키텍처의 중심 제어기로 HW-SW 분리를 통해 OTA 업데이트, 생성형 AI 콕핏, 자율주행 인지·판단을 총괄합니다.' },
+        battery: { title: '800V 고전압 배터리 팩 & BMS', desc: '하부 플랫 배치로 저중심을 구현하며, BMS가 수백 개 셀의 SOC·SOH를 감시하고 수냉식 열관리와 열폭주 방지를 수행합니다.' },
+        pe: { title: '전기 파워트레인 (PE System)', desc: 'SiC 전력반도체 인버터가 배터리 직류(DC)를 3상 교류(AC)로 변환해 구동모터(PMSM)와 감속기를 구동합니다(효율 85%+).' },
+        chassis: { title: '섀시 도메인 (VMC & X-by-Wire)', desc: 'Steer-by-Wire, Brake-by-Wire, Active Suspension을 통합 차량 운동 제어(VMC) 알고리즘으로 협조 제어하며 Fail-Operational 이중화를 지원합니다.' }
+      };
+      const item = infoMap[part];
+      document.getElementById('simPartInspector').innerHTML = `
+        <div class="text-xs font-bold text-hyundai-blue">부품 상세 인스펙터</div>
+        <h3 class="text-base font-bold text-white">${item.title}</h3>
+        <p class="text-xs text-slate-300 leading-relaxed">${item.desc}</p>
+      `;
+    };
+
+    window.setSimDrivingState = function(mode) {
+      const badge = document.getElementById('simModeBadge');
+      const stats = document.getElementById('simLiveStats');
+      if (!badge || !stats) return;
+
+      if (mode === 'accel') {
+        badge.className = 'px-2.5 py-0.5 rounded-full bg-sky-500/20 text-sky-300 text-xs font-bold';
+        badge.textContent = '🚀 급가속 구동 모드';
+        stats.innerHTML = `
+          <div class="flex justify-between p-2 rounded bg-hyundai-dark"><span>에너지 흐름</span><span class="text-amber-400">배터리 → 인버터 → 모터</span></div>
+          <div class="flex justify-between p-2 rounded bg-hyundai-dark"><span>인버터 출력</span><span class="text-white">239 kW (SiC 효율 98%)</span></div>
+          <div class="flex justify-between p-2 rounded bg-hyundai-dark"><span>이더넷 백본 부하</span><span class="text-emerald-400">34% (1Gbps TSN 정상)</span></div>
+          <div class="flex justify-between p-2 rounded bg-hyundai-dark"><span>VMC 자세 제어</span><span class="text-sky-300">후륜 트랙션 토크 벡터링 활성</span></div>
+        `;
+      } else if (mode === 'regen') {
+        badge.className = 'px-2.5 py-0.5 rounded-full bg-emerald-500/20 text-emerald-400 text-xs font-bold';
+        badge.textContent = '🔋 회생제동 충전 모드';
+        stats.innerHTML = `
+          <div class="flex justify-between p-2 rounded bg-hyundai-dark"><span>에너지 흐름</span><span class="text-emerald-400">바퀴/모터(발전) → 배터리</span></div>
+          <div class="flex justify-between p-2 rounded bg-hyundai-dark"><span>회생 충전 전력</span><span class="text-emerald-300">+68.4 kW 회수 중</span></div>
+          <div class="flex justify-between p-2 rounded bg-hyundai-dark"><span>Brake-by-Wire</span><span class="text-sky-300">회생제동 협조 배분 제어</span></div>
+          <div class="flex justify-between p-2 rounded bg-hyundai-dark"><span>BMS 상태</span><span class="text-white">셀 밸런싱 및 충전 전류 수용 양호</span></div>
+        `;
+      } else {
+        badge.className = 'px-2.5 py-0.5 rounded-full bg-rose-500/20 text-rose-400 text-xs font-bold';
+        badge.textContent = '🛑 AEB 긴급 제동 개입';
+        stats.innerHTML = `
+          <div class="flex justify-between p-2 rounded bg-hyundai-dark"><span>센서 퓨전 감지</span><span class="text-rose-400">전방 18m 급정거 객체 포착</span></div>
+          <div class="flex justify-between p-2 rounded bg-hyundai-dark"><span>CAN/이더넷 중재</span><span class="text-amber-300">최우선 긴급제동 프레임 전송</span></div>
+          <div class="flex justify-between p-2 rounded bg-hyundai-dark"><span>Brake-by-Wire</span><span class="text-rose-400">4륜 독립 캘리퍼 100% 제동</span></div>
+          <div class="flex justify-between p-2 rounded bg-hyundai-dark"><span>Fail-Operational</span><span class="text-emerald-400">듀얼 리던던시 전원 대기 정상</span></div>
+        `;
+      }
+    };
+
+    /*************************************************************************
+     * 9. VIEW 6: QUIZ & COMPREHENSIVE ASSESSMENT
+     *************************************************************************/
+    function renderQuiz() {
+      return `
+        <div class="space-y-6">
+          <div class="bg-hyundai-panel border border-hyundai-border rounded-2xl p-6 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+            <div>
+              <h1 class="text-2xl font-extrabold text-white">📝 자동차 전장 시스템 종합 평가 (객관식 · OX · 용어 · 실무)</h1>
+              <p class="text-xs sm:text-sm text-slate-300 mt-1">교재 전 범위(Ch.01 ~ Ch.03) 핵심 문항입니다. 제출 시 즉시 채점되며 틀린 문제는 오답 노트에 자동 저장됩니다.</p>
+            </div>
+            <button onclick="submitFullExam()" class="px-5 py-2.5 rounded-xl bg-hyundai-blue hover:bg-sky-400 text-slate-950 font-bold text-xs sm:text-sm shrink-0 shadow-lg">
+              ✔ 답안 제출 및 채점하기
+            </button>
+          </div>
+
+          <div id="examResultBanner" class="hidden rounded-2xl p-6 border"></div>
+
+          <div class="space-y-4" id="examQuestionsList">
+            ${EXAM_QUESTIONS.map((q, idx) => `
+              <div class="bg-hyundai-panel border border-hyundai-border rounded-2xl p-5 space-y-3" id="examCard_${idx}">
+                <div class="flex items-center justify-between text-xs">
+                  <span class="px-2.5 py-0.5 rounded bg-hyundai-navy text-sky-300 font-bold">${q.chapter} • ${q.type}</span>
+                  <span class="font-mono text-slate-400">문항 0${idx + 1} / 0${EXAM_QUESTIONS.length}</span>
+                </div>
+                <h3 class="text-sm sm:text-base font-bold text-white leading-snug">${q.q}</h3>
+                <div class="space-y-2">
+                  ${q.options.map((opt, oIdx) => `
+                    <label class="flex items-center gap-3 p-3 rounded-xl bg-hyundai-card border border-hyundai-border hover:border-hyundai-blue cursor-pointer text-xs sm:text-sm text-slate-200 transition">
+                      <input type="radio" name="exam_q_${idx}" value="${oIdx}" class="accent-hyundai-blue w-4 h-4"/>
+                      <span>${opt}</span>
+                    </label>
+                  `).join('')}
+                </div>
+                <div id="examExp_${idx}" class="hidden p-3.5 rounded-xl text-xs sm:text-sm leading-relaxed"></div>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function initQuizInteractions() {}
+
+    window.submitFullExam = function() {
+      let correctCount = 0;
+      let unanswered = 0;
+
+      EXAM_QUESTIONS.forEach((q, idx) => {
+        const checked = document.querySelector(`input[name="exam_q_${idx}"]:checked`);
+        const expBox = document.getElementById(`examExp_${idx}`);
+        expBox.classList.remove('hidden');
+
+        if (!checked) {
+          unanswered++;
+          expBox.className = 'p-3.5 rounded-xl text-xs sm:text-sm leading-relaxed bg-amber-500/15 border border-amber-500/40 text-amber-200';
+          expBox.innerHTML = `<strong>⚠️ 미응답 문항 (정답: ${q.options[q.answer]})</strong><br/>${q.explanation}`;
+          return;
+        }
+
+        const userVal = parseInt(checked.value, 10);
+        if (userVal === q.answer) {
+          correctCount++;
+          expBox.className = 'p-3.5 rounded-xl text-xs sm:text-sm leading-relaxed bg-emerald-500/15 border border-emerald-500/40 text-emerald-200';
+          expBox.innerHTML = `<strong>✅ 정답입니다!</strong><br/>${q.explanation}`;
+        } else {
+          expBox.className = 'p-3.5 rounded-xl text-xs sm:text-sm leading-relaxed bg-rose-500/15 border border-rose-500/40 text-rose-200';
+          expBox.innerHTML = `<strong>❌ 오답입니다. (선택: ${q.options[userVal]} / 정답: ${q.options[q.answer]})</strong><br/>${q.explanation}`;
+          addWrongNote({
+            id: q.id,
+            chapter: q.chapter,
+            q: q.q,
+            userAns: q.options[userVal],
+            correctAns: q.options[q.answer],
+            explanation: q.explanation
+          });
+        }
+      });
+
+      const score = Math.round((correctCount / EXAM_QUESTIONS.length) * 100);
+      appState.quizScores['final_exam'] = score;
+      logActivity(`[종합 평가 완료] 점수: ${score}점 (${correctCount}/${EXAM_QUESTIONS.length} 정답)`);
+      saveState();
+
+      const banner = document.getElementById('examResultBanner');
+      banner.classList.remove('hidden');
+      banner.className = score >= 80
+        ? 'rounded-2xl p-6 border bg-emerald-500/15 border-emerald-500/40 text-emerald-200'
+        : 'rounded-2xl p-6 border bg-sky-500/15 border-sky-500/40 text-sky-200';
+      banner.innerHTML = `
+        <div class="flex flex-wrap items-center justify-between gap-4">
+          <div>
+            <div class="text-xs font-bold uppercase tracking-wider">FINAL ASSESSMENT RESULT</div>
+            <div class="text-2xl font-extrabold text-white mt-1">종합 평가 점수: ${score}점 (${correctCount} / ${EXAM_QUESTIONS.length}문항 정답)</div>
+            <p class="text-xs mt-1">${unanswered > 0 ? `미응답 ${unanswered}문항이 있습니다. ` : ''}틀린 문항은 [나의 학습 기록 > 오답 노트]에 자동 저장되었습니다.</p>
+          </div>
+          <button onclick="navigate('records')" class="px-4 py-2 rounded-xl bg-white text-slate-950 font-bold text-xs">오답 노트 확인하기 →</button>
+        </div>
+      `;
+      banner.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    /*************************************************************************
+     * 10. VIEW 7: CORE GLOSSARY (핵심 용어 사전)
+     *************************************************************************/
+    function renderGlossary() {
+      const categories = ['전체', '차량 구성', '센서', 'E/E 아키텍처', '차량 통신', '배터리/전동화', '파워트레인', '섀시', 'ADAS/자율주행'];
+      return `
+        <div class="space-y-6">
+          <div class="bg-hyundai-panel border border-hyundai-border rounded-2xl p-6 space-y-4">
+            <div>
+              <h1 class="text-2xl font-extrabold text-white">📖 자동차 전장 핵심 용어 사전 (한글 · 영문 대조)</h1>
+              <p class="text-xs sm:text-sm text-slate-300 mt-1">교재에 등장하는 필수 전장 약어와 엔지니어링 용어를 검색하거나 도메인별로 필터링해 학습하세요.</p>
+            </div>
+            <div class="flex flex-col sm:flex-row gap-3">
+              <input id="glossarySearch" type="text" placeholder="용어 검색 (예: LiDAR, Zonal, CAN, BMS, VMC, E2E)..." class="flex-1 p-3 rounded-xl bg-hyundai-dark border border-hyundai-border text-xs sm:text-sm text-white focus:border-hyundai-blue focus:outline-none"/>
+              <select id="glossaryCat" class="p-3 rounded-xl bg-hyundai-dark border border-hyundai-border text-xs sm:text-sm text-white">
+                ${categories.map(c => `<option value="${c}">${c}</option>`).join('')}
+              </select>
+            </div>
+          </div>
+
+          <div id="glossaryGrid" class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            ${renderGlossaryCards(GLOSSARY_ITEMS)}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderGlossaryCards(list) {
+      if (!list.length) {
+        return `<div class="col-span-2 p-8 text-center text-slate-400 bg-hyundai-panel rounded-2xl border border-hyundai-border text-sm">검색 조건에 일치하는 용어가 없습니다.</div>`;
+      }
+      return list.map(item => `
+        <div class="bg-hyundai-panel border border-hyundai-border hover:border-hyundai-blue/60 rounded-2xl p-5 space-y-2 transition">
+          <div class="flex items-center justify-between gap-2">
+            <span class="text-base font-extrabold text-hyundai-blue font-mono">${item.term}</span>
+            <span class="px-2.5 py-0.5 rounded-full bg-hyundai-card text-sky-300 text-[11px] font-semibold border border-hyundai-border">${item.cat}</span>
+          </div>
+          <div class="text-xs font-semibold text-slate-400">${item.full}</div>
+          <p class="text-xs sm:text-sm text-slate-200 leading-relaxed pt-1">${item.def}</p>
+        </div>
+      `).join('');
+    }
+
+    function initGlossaryInteractions() {
+      const filter = () => {
+        const kw = document.getElementById('glossarySearch').value.trim().toLowerCase();
+        const cat = document.getElementById('glossaryCat').value;
+        const filtered = GLOSSARY_ITEMS.filter(item => {
+          const matchCat = cat === '전체' || item.cat === cat;
+          const matchKw = !kw || item.term.toLowerCase().includes(kw) || item.full.toLowerCase().includes(kw) || item.def.toLowerCase().includes(kw);
+          return matchCat && matchKw;
+        });
+        document.getElementById('glossaryGrid').innerHTML = renderGlossaryCards(filtered);
+      };
+      document.getElementById('glossarySearch').addEventListener('input', filter);
+      document.getElementById('glossaryCat').addEventListener('change', filter);
+    }
+
+    /*************************************************************************
+     * 11. VIEW 8: MY LEARNING RECORDS & WRONG ANSWER NOTES
+     *************************************************************************/
+    function renderRecords() {
+      const incompleteChapters = CURRICULUM.filter(c => !appState.completedChapters.includes(c.id));
+
+      return `
+        <div class="space-y-6">
+          <div class="bg-hyundai-panel border border-hyundai-border rounded-2xl p-6 flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h1 class="text-2xl font-extrabold text-white">🏆 나의 학습 기록 및 오답 노트</h1>
+              <p class="text-xs sm:text-sm text-slate-300 mt-1">학습 진도, 평가 점수, 취약 개념 및 오답 노트는 브라우저에 자동 저장되어 새로고침 후에도 유지됩니다.</p>
+            </div>
+            <button onclick="resetAllProgress()" class="px-3.5 py-2 rounded-xl bg-rose-500/15 hover:bg-rose-500/25 text-rose-300 border border-rose-500/40 text-xs font-bold transition">
+              학습 기록 초기화
+            </button>
+          </div>
+
+          <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <!-- Wrong Answer Notes -->
+            <div class="bg-hyundai-panel border border-hyundai-border rounded-2xl p-6 space-y-4">
+              <div class="flex items-center justify-between">
+                <h2 class="text-lg font-bold text-rose-400">📌 저장된 오답 노트 (${appState.wrongNotes.length}건)</h2>
+              </div>
+              ${appState.wrongNotes.length === 0
+                ? '<div class="p-6 rounded-xl bg-hyundai-card text-center text-xs text-slate-400">현재 오답 노트에 저장된 문항이 없습니다. 완벽합니다!</div>'
+                : `<div class="space-y-3">
+                    ${appState.wrongNotes.map((n, i) => `
+                      <div class="p-4 rounded-xl bg-hyundai-card border border-rose-500/30 space-y-2 text-xs">
+                        <div class="flex items-center justify-between">
+                          <span class="font-bold text-sky-300">${n.chapter}</span>
+                          <button onclick="removeWrongNote(${i})" class="text-slate-400 hover:text-emerald-400 font-semibold">✓ 복습 완료(삭제)</button>
+                        </div>
+                        <div class="font-bold text-white text-sm">${n.q}</div>
+                        <div class="text-rose-300">• 내가 고른 오답: ${n.userAns}</div>
+                        <div class="text-emerald-300 font-semibold">• 정답: ${n.correctAns}</div>
+                        <p class="text-slate-300 leading-relaxed pt-1 border-t border-hyundai-border">${n.explanation}</p>
+                      </div>
+                    `).join('')}
+                  </div>`
+              }
+            </div>
+
+            <!-- Weak Areas & Concepts to Review -->
+            <div class="bg-hyundai-panel border border-hyundai-border rounded-2xl p-6 space-y-4">
+              <h2 class="text-lg font-bold text-amber-400">🎯 복습이 필요한 취약 영역 (미완료 단원)</h2>
+              ${incompleteChapters.length === 0
+                ? '<div class="p-6 rounded-xl bg-emerald-500/15 border border-emerald-500/40 text-emerald-200 text-xs sm:text-sm font-bold">🎉 축하합니다! 전체 10개 강의를 모두 완료했습니다.</div>'
+                : `<div class="space-y-2.5">
+                    ${incompleteChapters.map(c => `
+                      <div class="p-3.5 rounded-xl bg-hyundai-card border border-hyundai-border flex items-center justify-between gap-3">
+                        <div>
+                          <div class="text-xs font-mono text-sky-400">${c.chapter}</div>
+                          <div class="text-sm font-bold text-white">${c.title}</div>
+                        </div>
+                        <button onclick="navigate('theory', '${c.id}')" class="px-3 py-1.5 rounded-lg bg-hyundai-blue text-slate-950 font-bold text-xs shrink-0">학습하기</button>
+                      </div>
+                    `).join('')}
+                  </div>`
+              }
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    window.removeWrongNote = function(idx) {
+      appState.wrongNotes.splice(idx, 1);
+      saveState();
+      renderCurrentRoute();
+      showToast('오답 노트 항목을 복습 완료 처리했습니다.');
+    };
+
+    window.resetAllProgress = function() {
+      appState = { ...defaultState, completedChapters: [], quizScores: {}, wrongNotes: [], recentActivities: [{ time: '방금 전', text: '학습 기록이 초기화되었습니다.' }] };
+      saveState();
+      renderCurrentRoute();
+      showToast('모든 학습 기록이 초기화되었습니다.', '🔄');
+    };
+
+    /*************************************************************************
+     * 12. INITIAL BOOTSTRAP
+     *************************************************************************/
+    window.addEventListener('DOMContentLoaded', () => {
+      updateGlobalProgressUI();
+      navigate(appState.currentRoute || 'dashboard');
+    });
+  </script>
+</body>
+</html>
